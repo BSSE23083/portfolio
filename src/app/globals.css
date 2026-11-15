@@ -1,10 +1,258 @@
 @import "tailwindcss";
 
-html,
+/* Dark (night, lamp on) is the default theme. The lamp cord and the nav button switch it. */
+:root {
+  --bg: #0f1016;
+  --surface: #181a23;
+  --text: #f2ead9;
+  --muted: #a8a294;
+  --line: rgba(242, 234, 217, 0.14);
+  --accent: #ffb86b;
+  --accent-ink: #1a1206;
+  --glass: rgba(15, 16, 22, 0.72);
+}
+
+:root[data-theme="light"] {
+  --bg: #f4efe4;
+  --surface: #fffaf0;
+  --text: #1f1c17;
+  --muted: #6d665a;
+  --line: rgba(31, 28, 23, 0.14);
+  --accent: #c2621c;
+  --accent-ink: #fff8ec;
+  --glass: rgba(255, 250, 240, 0.78);
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  height: 100%;
   margin: 0;
-  background: #0c0e17;
-  color: #f2ead9;
+  background: var(--bg);
+  color: var(--text);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.font-display {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ---------- Shared 2D pieces ---------- */
+
+.kicker,
+.room-kicker {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.site-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  padding: 0.65rem 1.15rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+.site-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+.site-button.is-ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+
+.card {
+  display: block;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 18px;
+  overflow: hidden;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+a.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+}
+
+.placeholder-note {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.72rem;
+  color: var(--accent);
+  border: 1px dashed var(--accent);
+  border-radius: 8px;
+  padding: 0.15rem 0.5rem;
+  display: inline-block;
+}
+
+/* Case study text (MDX) */
+.prose-case h2 {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 1.9rem;
+  font-weight: 500;
+  margin: 3.5rem 0 0.9rem;
+  scroll-margin-top: 6rem;
+}
+.prose-case p,
+.prose-case li {
+  color: var(--muted);
+  line-height: 1.75;
+  font-size: 1.02rem;
+}
+.prose-case p {
+  margin: 0 0 1.1rem;
+}
+.prose-case ul {
+  list-style: disc;
+  padding-left: 1.2rem;
+  margin: 0 0 1.1rem;
+}
+.prose-case strong {
+  color: var(--text);
+}
+
+/* ---------- Controls over the 3D room ---------- */
+
+.room-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  white-space: nowrap;
+  background: var(--glass);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.35rem 0.7rem;
+  color: var(--text);
+  font-size: 0.8rem;
+  line-height: 1.25;
+}
+.room-label span {
+  font-size: 0.68rem;
+  color: var(--accent);
+}
+
+.room-chip,
+.room-button,
+.room-panel {
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--line);
+  color: var(--text);
+}
+.room-chip {
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+}
+.room-button {
+  border-radius: 999px;
+  padding: 0.6rem 1.1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+.room-button:hover {
+  border-color: var(--accent);
+}
+.room-panel {
+  border-radius: 18px;
+  padding: 1.25rem 1.35rem 1.4rem;
+  animation: panel-in 0.5s 0.5s both ease-out;
+}
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.room-menu-item {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  padding: 0 0.9rem;
+  color: var(--text);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.room-menu-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+.room-menu-item:hover .room-menu-dot,
+.room-menu-item:focus-visible .room-menu-dot,
+.room-menu-item.is-active .room-menu-dot {
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+}
+
+/* Desktop: the menu collapses to dots on the right; labels slide out on hover / focus. */
+@media (min-width: 768px) {
+  .room-menu-item {
+    flex-direction: row-reverse;
+    min-height: 30px;
+    border-color: transparent;
+    background: transparent;
+    backdrop-filter: none;
+    padding: 0 0.3rem;
+  }
+  .room-menu-text {
+    opacity: 0;
+    transform: translateX(6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    background: var(--glass);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.2rem 0.65rem;
+    white-space: nowrap;
+  }
+  .room-menu-item:hover .room-menu-text,
+  .room-menu-item:focus-visible .room-menu-text,
+  .room-menu-item.is-active .room-menu-text {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .room-panel {
+    animation: none;
+  }
 }

@@ -13,7 +13,7 @@ The home page is an interactive **3D, low-poly recreation of his real room corne
 **The 3D room is Abdul's main focus.** Take the time needed to make it great. Target: v1 by end of December 2026.
 
 ## Working mode (agreed)
-- **Work in checkpoints** (changed 2026-11-16 to save tokens): build a part, stop, let Abdul review. Order: 3D room and character (done, awaiting review) → interactions and scroll tour → 2D pages → polish and deploy.
+- **Work in checkpoints** (changed 2026-11-16 to save tokens): build a part, stop, let Abdul review. Done so far: 3D room and character, interactions and scroll tour, nav, 2D pages and MDX case study template (all with placeholders). Remaining: real content, still-image fallback for weak devices, performance check on a visible screen, GitHub + Vercel deploy. Content pulled from Figma is in content/figma-notes.md; placeholders are listed in content/PLACEHOLDERS.md (regenerate with `npm run placeholders`).
 - **3D room first**, then 2D pages.
 - Commit after each step with a clear message (git is initialized locally; GitHub comes at the end).
 - Keep 3D objects as separate, well-named components (`Desk.tsx`, `Monitor.tsx`, `Character.tsx`, ...).

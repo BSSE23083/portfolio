@@ -27,7 +27,7 @@ export const DESK = {
 
 /** Chair + character. Rotation is around Y; 0 means facing the window wall (the desk). */
 export const SEAT = {
-  position: [-0.52, 0, 1.04] as Vec3,
+  position: [-0.6, 0, 1.04] as Vec3,
   rotationY: 0.06,
   /** Where the chair swivels to when the character waves at the camera. */
   waveRotationY: 2.3,
@@ -55,8 +55,12 @@ export const CAMERA = {
     position: [-3.85, 1.8, 3.85] as Vec3,
     target: [-0.92, 0.78, 0.35] as Vec3,
   },
-  /** How far the view shifts with the mouse (subtle parallax). */
-  parallax: 0.12,
+  /** How far the view turns with the mouse (subtle parallax, radians). */
+  parallax: 0.035,
+  /** Max drag rotation left/right, in radians (about 17 degrees). */
+  dragLimit: 0.3,
+  /** Seconds for the camera to fly to an object. */
+  flyDuration: 1.5,
 };
 
 export const COLORS = {
@@ -103,19 +107,19 @@ export const LIGHTS = {
     ambient: { color: "#5f6ea8", intensity: 0.5 },
     moon: { color: "#7f9cff", intensity: 0.75, position: [-2.2, 2.2, -1.5] as Vec3 },
     fill: { color: "#39446e", intensity: 0.5, position: [-3, 2.5, 4] as Vec3 },
-    lamp: { color: "#ffb86b", intensity: 22, glow: 2.2 },
+    lamp: { color: "#ffb86b", intensity: 15, glow: 1.3 },
     window: "#31457f",
-    bloom: 0.9,
+    bloom: 0.35,
     vignette: 0.62,
   },
   light: {
     background: "#cfd9e6",
-    ambient: { color: "#fff4e0", intensity: 1.5 },
-    moon: { color: "#fff1d6", intensity: 2.4, position: [-2.2, 2.6, -1.5] as Vec3 },
+    ambient: { color: "#fff4e0", intensity: 1.15 },
+    moon: { color: "#fff1d6", intensity: 2.0, position: [-2.2, 2.6, -1.5] as Vec3 },
     fill: { color: "#dfe9ff", intensity: 1.1, position: [-3, 2.5, 4] as Vec3 },
     lamp: { color: "#ffcf99", intensity: 4, glow: 0.5 },
     window: "#dcecff",
-    bloom: 0.25,
+    bloom: 0.15,
     vignette: 0.3,
   },
 };

@@ -1,10 +1,11 @@
 "use client";
 
 import { useMemo, useRef } from "react";
-import { useFrame, type ThreeEvent } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { COLORS, LAMP, LIGHTS, ROOM, type ThemeName } from "@/config/scene.config";
 import { Cyl } from "./primitives";
+import { Interactive } from "./Interactive";
 
 /**
  * Pendant lamp hanging from the ceiling. Its warm light pooled on the desk is the focus of the scene.
@@ -29,8 +30,7 @@ export function Lamp({ theme, onPull }: { theme: ThemeName; onPull?: () => void 
     if (pull.current) pull.current.position.y = -Math.sin(tug.current * Math.PI) * 0.06;
   });
 
-  const handlePull = (e: ThreeEvent<MouseEvent>) => {
-    e.stopPropagation();
+  const handlePull = () => {
     tug.current = 1;
     onPull?.();
   };
@@ -45,7 +45,7 @@ export function Lamp({ theme, onPull }: { theme: ThemeName; onPull?: () => void 
       <Cyl radius={0.03} height={0.05} color={COLORS.lampShade} position={[0, 0.065, 0]} castShadow={false} />
       <mesh position={[0, -0.03, 0]}>
         <cylinderGeometry args={[0.05, 0.2, 0.15, 12, 1, true]} />
-        <meshStandardMaterial color={COLORS.lampShade} flatShading roughness={0.5} metalness={0.3} />
+        <meshStandardMaterial color={COLORS.lampShade} flatShading roughness={0.5} metalness={0.1} />
       </mesh>
       <mesh position={[0, -0.03, 0]}>
         <cylinderGeometry args={[0.048, 0.196, 0.15, 12, 1, true]} />
@@ -59,22 +59,18 @@ export function Lamp({ theme, onPull }: { theme: ThemeName; onPull?: () => void 
       </mesh>
 
       {/* Pull cord (clickable, with a generous invisible hit area) */}
-      <group ref={pull} position={[0.13, -0.1, 0.06]}>
-        <Cyl radius={0.003} height={0.3} segments={4} color="#d9d2c0" position={[0, -0.15, 0]} castShadow={false} />
-        <mesh position={[0, -0.31, 0]}>
-          <icosahedronGeometry args={[0.018, 0]} />
-          <meshStandardMaterial color={COLORS.glassesRim} flatShading metalness={0.6} roughness={0.35} />
-        </mesh>
-        <mesh
-          position={[0, -0.2, 0]}
-          onClick={handlePull}
-          onPointerOver={() => (document.body.style.cursor = "pointer")}
-          onPointerOut={() => (document.body.style.cursor = "")}
-        >
-          <boxGeometry args={[0.12, 0.34, 0.12]} />
-          <meshBasicMaterial transparent opacity={0} depthWrite={false} />
-        </mesh>
-      </group>
+      <Interactive id="lamp" onActivate={handlePull} labelY={-0.42} position={[0.13, -0.1, 0.06]}>
+        <group ref={pull}>
+          <Cyl radius={0.003} height={0.3} segments={4} color="#d9d2c0" position={[0, -0.15, 0]} castShadow={false} />
+          <mesh position={[0, -0.31, 0]}>
+            <icosahedronGeometry args={[0.018, 0]} />
+            <meshStandardMaterial color={COLORS.glassesRim} flatShading roughness={0.5} />
+          </mesh>
+          <mesh position={[0, -0.2, 0]} visible={false}>
+            <boxGeometry args={[0.12, 0.34, 0.12]} />
+          </mesh>
+        </group>
+      </Interactive>
 
       {/* The light itself: a soft-edged cone that pools on the desk, plus a faint glow */}
       <primitive object={target} position={[0.12, -y, 0]} />
@@ -88,7 +84,7 @@ export function Lamp({ theme, onPull }: { theme: ThemeName; onPull?: () => void 
         decay={1.6}
         distance={7}
         castShadow
-        shadow-mapSize={[1024, 1024]}
+        shadow-mapSize={[2048, 2048]}
         shadow-bias={-0.0006}
         shadow-radius={5}
       />

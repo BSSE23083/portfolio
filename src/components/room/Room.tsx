@@ -27,7 +27,7 @@ export function Room({ theme }: { theme: ThemeName }) {
       {/* Floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-L / 2, 0, L / 2]} receiveShadow>
         <planeGeometry args={[L, L]} />
-        <meshStandardMaterial map={tiles} roughness={0.55} />
+        <meshStandardMaterial map={tiles} roughness={0.95} />
       </mesh>
 
       {/* Window wall (left on screen) and right wall */}

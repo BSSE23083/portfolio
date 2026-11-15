@@ -1,6 +1,8 @@
 "use client";
 
-import type { ThreeElements } from "@react-three/fiber";
+import { useRef } from "react";
+import { useFrame, type ThreeElements } from "@react-three/fiber";
+import * as THREE from "three";
 import { COLORS } from "@/config/scene.config";
 import { Box, Cyl, useCanvasTexture } from "./primitives";
 
@@ -19,12 +21,12 @@ export function Laptop(props: GroupProps) {
   });
   return (
     <group {...props}>
-      <Box size={[0.33, 0.014, 0.225]} position={[0, 0.007, 0]} color={COLORS.laptop} metalness={0.4} roughness={0.5} />
+      <Box size={[0.33, 0.014, 0.225]} position={[0, 0.007, 0]} color={COLORS.laptop} metalness={0.1} roughness={0.7} />
       <Box size={[0.29, 0.002, 0.11]} position={[0, 0.0145, -0.03]} color="#25262c" castShadow={false} />
       <Box size={[0.1, 0.002, 0.06]} position={[0, 0.0145, 0.07]} color="#7d8088" castShadow={false} />
       {/* Lid, hinged at the back edge and leaning away from the typist */}
       <group position={[0, 0.014, -0.11]} rotation={[-0.32, 0, 0]}>
-        <Box size={[0.33, 0.215, 0.008]} position={[0, 0.1075, 0]} color={COLORS.laptop} metalness={0.4} roughness={0.5} />
+        <Box size={[0.33, 0.215, 0.008]} position={[0, 0.1075, 0]} color={COLORS.laptop} metalness={0.1} roughness={0.7} />
         <mesh position={[0, 0.108, 0.0045]}>
           <planeGeometry args={[0.31, 0.195]} />
           <meshBasicMaterial map={screen} toneMapped={false} />
@@ -65,7 +67,20 @@ export function Phone({ on = false, ...props }: GroupProps & { on?: boolean }) {
 }
 
 /** Open sketchbook with a pencil (Art). */
-export function Sketchbook(props: GroupProps) {
+export function Sketchbook({ flipping = false, ...props }: GroupProps & { flipping?: boolean }) {
+  const flip = useRef<THREE.Group>(null);
+  const progress = useRef(0);
+
+  // While selected, a page turns from right to left every few seconds.
+  useFrame((_, dt) => {
+    if (!flip.current) return;
+    progress.current = flipping ? (progress.current + dt / 2.6) % 1 : 0;
+    const turn = Math.min(1, progress.current / 0.45); // turn takes the first 45% of the cycle
+    const eased = turn * turn * (3 - 2 * turn);
+    flip.current.visible = flipping && turn < 1;
+    flip.current.rotation.z = eased * Math.PI;
+  });
+
   const page = useCanvasTexture(256, 340, (ctx, w, h) => {
     ctx.fillStyle = COLORS.paper;
     ctx.fillRect(0, 0, w, h);
@@ -110,6 +125,10 @@ export function Sketchbook(props: GroupProps) {
           )}
         </group>
       ))}
+      {/* The turning page, hinged at the spine */}
+      <group ref={flip} position={[0, 0.016, 0]} visible={false}>
+        <Box size={[0.195, 0.002, 0.27]} position={[0.0975, 0, 0]} color="#fbf5e6" castShadow={false} />
+      </group>
       {/* Pencil */}
       <group position={[0.09, 0.02, 0.02]} rotation={[0, 0.9, 0]}>
         <Cyl radius={0.0045} height={0.16} segments={6} color="#e0b23c" rotation={[Math.PI / 2, 0, 0]} />
@@ -182,19 +201,30 @@ const BOOKS = [
 
 /** Upright books/folders (Visual & Brand). `pulled` slides one book out. */
 export function Books({ pulled = false, ...props }: GroupProps & { pulled?: boolean }) {
+  const book = useRef<THREE.Mesh>(null);
+  const PULLED = 2; // which book slides out
+
+  useFrame((_, dt) => {
+    if (!book.current) return;
+    const b = book.current;
+    b.position.z = THREE.MathUtils.damp(b.position.z, pulled ? 0.1 : 0, 5, dt);
+    b.position.y = THREE.MathUtils.damp(b.position.y, BOOKS[PULLED].h / 2 + (pulled ? 0.02 : 0), 5, dt);
+    b.rotation.x = THREE.MathUtils.damp(b.rotation.x, pulled ? 0.2 : 0, 5, dt);
+  });
+
   let x = 0;
   return (
     <group {...props}>
-      {BOOKS.map((book, i) => {
-        const cx = x + book.t / 2;
-        x += book.t + 0.002;
-        const isPulled = pulled && i === 2;
+      {BOOKS.map((spec, i) => {
+        const cx = x + spec.t / 2;
+        x += spec.t + 0.002;
         return (
           <Box
             key={i}
-            size={[book.t, book.h, book.d]}
-            position={[cx, book.h / 2 + (isPulled ? 0.02 : 0), isPulled ? 0.09 : (book.d - 0.18) / 2]}
-            rotation={[isPulled ? 0.18 : 0, 0, i === BOOKS.length - 1 ? -0.1 : 0]}
+            ref={i === PULLED ? book : undefined}
+            size={[spec.t, spec.h, spec.d]}
+            position={[cx, spec.h / 2, i === PULLED ? 0 : (spec.d - 0.18) / 2]}
+            rotation={[0, 0, i === BOOKS.length - 1 ? -0.1 : 0]}
             color={COLORS.books[i % COLORS.books.length]}
           />
         );

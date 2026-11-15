@@ -160,10 +160,10 @@ function Legs() {
       {[-1, 1].map((side) => (
         <group key={side} position={[side * 0.105, 0, 0]}>
           <Box size={[0.165, 0.15, 0.44]} position={[0, 0.07, -0.2]} color={COLORS.pants} />
-          <Box size={[0.155, 0.44, 0.165]} position={[0, -0.2, -0.37]} rotation={[0.06, 0, 0]} color={COLORS.pants} />
+          <Box size={[0.155, 0.44, 0.165]} position={[0, -0.2, -0.345]} rotation={[-0.05, 0, 0]} color={COLORS.pants} />
           {/* Sneaker: white upper, dark sole */}
-          <Box size={[0.11, 0.065, 0.25]} position={[0, -0.435, -0.42]} color={COLORS.shoe} />
-          <Box size={[0.115, 0.025, 0.26]} position={[0, -0.485, -0.42]} color={COLORS.shoeSole} />
+          <Box size={[0.11, 0.065, 0.25]} position={[0, -0.435, -0.37]} color={COLORS.shoe} />
+          <Box size={[0.115, 0.025, 0.26]} position={[0, -0.485, -0.37]} color={COLORS.shoeSole} />
         </group>
       ))}
     </>
