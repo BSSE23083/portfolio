@@ -3,7 +3,7 @@
 import type { ObjectId } from "@/config/objects";
 import { useRoom } from "../store";
 
-/** Each button moves the camera to an object in the room. */
+/** Each button moves the camera to an object in the room. The bar shows only on the home (desk) view. */
 const BUTTONS: { label: string; target: ObjectId }[] = [
   { label: "about", target: "character" },
   { label: "work", target: "monitor" },
@@ -15,8 +15,13 @@ export function Nav() {
   const setFocus = useRoom((s) => s.setFocus);
 
   return (
-    <header className="pointer-events-none fixed inset-x-0 top-3 z-40 px-3 md:top-4 md:px-6">
-      <div className="navbar pointer-events-auto mx-auto flex h-14 max-w-5xl items-center gap-2 px-4 md:h-16 md:px-7">
+    <header
+      aria-hidden={focus !== null}
+      className={`pointer-events-none fixed inset-x-0 top-3 z-40 px-3 transition-[transform,opacity] duration-500 md:top-4 md:px-6 ${
+        focus !== null ? "-translate-y-[160%] opacity-0" : ""
+      }`}
+    >
+      <div className={`navbar mx-auto flex h-14 max-w-5xl items-center gap-2 px-4 md:h-16 md:px-7 ${focus !== null ? "pointer-events-none" : "pointer-events-auto"}`}>
         <button onClick={() => setFocus(null)} aria-label="Back to the desk (home)" className="shrink-0 cursor-pointer">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo-navy.png" alt="Abdul Samad Sohail logo" className="h-8 w-auto md:h-10" />

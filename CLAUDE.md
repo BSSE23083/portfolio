@@ -3,6 +3,13 @@
 Project brief and **all decisions agreed with Abdul** (2026-11-16). Read this fully before building.
 Where this file and the original brief disagree, this file wins.
 
+## Revision 4 (2026-11-16): overrides earlier revisions where they conflict
+
+- **Navbar shows only on the home (desk) view.** It slides away whenever an object is selected.
+- **Dark screens are frameless** (`frameless: true` in `Screens.tsx`: books, sketchbook, camera): edge to edge on black, no window chrome, a "back" button top-left, and page buttons floating at the bottom. Cream screens (Rishtay, VR, About, Contact) keep the retro window.
+- **Scroll performance:** the 3D canvas stops rendering once a screen covers it (`paused` in `RoomExperience.tsx`); Mixed Media uses a pre-darkened paper texture (no CSS blend) and no CSS filters.
+- **Dev server note:** Abdul's `npm run dev` sometimes serves stale CSS after edits to `globals.css`. Re-save the file (or append a newline) to force a recompile, and avoid running `next build` while his dev server is up.
+
 ## Revision 3 (2026-11-16): overrides Revision 2 where they conflict
 
 - **Screens follow the Figma frames** (page "2025", section "New"). Frame node ids: Mixed Media `2030:507`, Social `2035:980`, Gen Ai `2151:333`, Desktop - 7 `2034:807`. Open one with `?node-id=2030-507`; set zoom to about 26% and drag the canvas to pan (scrolling barely moves it).

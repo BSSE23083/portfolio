@@ -13,7 +13,7 @@ type ImageName = keyof typeof sizes;
 function Shot({ name, alt, className = "" }: { name: ImageName; alt: string; className?: string }) {
   const [width, height] = sizes[name];
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src={`/images/${name}.webp`} alt={alt} width={width} height={height} loading="lazy" className={`block h-auto w-full ${className}`} />;
+  return <img src={`/images/${name}.webp`} alt={alt} width={width} height={height} loading="lazy" decoding="async" className={`block h-auto w-full ${className}`} />;
 }
 
 /** Images side by side at one shared height, filling the width exactly (no ragged edges). */
@@ -404,17 +404,20 @@ export function ContactList() {
 /** One page of a screen. A screen with several pages shows page buttons under the title bar. */
 type Page = { label: string; tone?: "cream" | "dark"; render: () => ReactNode };
 
-export const SCREENS: Record<ScreenId, { pages: Page[] }> = {
+/** `frameless` screens open edge to edge on black, with a back button and floating page buttons. */
+export const SCREENS: Record<ScreenId, { frameless?: boolean; pages: Page[] }> = {
   work: { pages: [{ label: "Rishtay", render: () => <WorkScreen /> }] },
   games: { pages: [{ label: "Games", render: () => <GamesScreen /> }] },
   art: {
+    frameless: true,
     pages: [
       { label: "mixed media", tone: "dark", render: () => <MixedMediaPage /> },
       { label: "illustrations", tone: "dark", render: () => <IllustrationsPage /> },
     ],
   },
-  genai: { pages: [{ label: "Generative AI", tone: "dark", render: () => <GenAiScreen /> }] },
+  genai: { frameless: true, pages: [{ label: "Generative AI", tone: "dark", render: () => <GenAiScreen /> }] },
   brand: {
+    frameless: true,
     pages: [
       { label: "logofolio", tone: "dark", render: () => <LogofolioPage /> },
       { label: "packaging", tone: "dark", render: () => <PackagingPage /> },

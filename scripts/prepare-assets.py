@@ -142,6 +142,12 @@ img = Image.new("RGBA", (box[2] - box[0] + pad * 2, box[3] - box[1] + pad * 2), 
 ImageDraw.Draw(img).text((pad - box[0], pad - box[1]), title, font=font, fill=RED + (255,))
 img.save("public/title-mixed-media.png")
 
+# Dark crumpled paper for Mixed Media, pre-multiplied so the browser does not blend while scrolling
+from PIL import ImageChops
+paper = Image.open(os.path.join(OUT, "texture-paper.webp")).convert("RGB")
+dark = ImageChops.multiply(paper, Image.new("RGB", paper.size, (46, 46, 46)))
+dark.save(os.path.join(OUT, "texture-paper-dark.webp"), quality=80, method=6)
+
 # width / height of every web image, so galleries can lay rows out without gaps
 import json
 sizes = {}

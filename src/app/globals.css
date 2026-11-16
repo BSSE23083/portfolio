@@ -116,7 +116,8 @@ body {
 /* The screen that pops up from below, one second after the camera reaches an object. */
 .sheet {
   position: absolute;
-  inset: 7.75rem 1rem 0; /* clear breathing room under the navbar */
+  inset: 2.5rem 1rem 0; /* the navbar hides while a screen is open */
+  will-change: transform;
   z-index: 20;
   transform: translateY(108%);
   transition: transform 0.6s ease-in;
@@ -132,6 +133,58 @@ body {
   border-bottom-right-radius: 0;
   max-width: 76rem;
   margin: 0 auto;
+}
+
+/* Dark screens open edge to edge with no window frame: just the work on black. */
+.sheet.is-full {
+  inset: 0;
+}
+.fullscreen {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #0b0b0b;
+  color: #e9e2d0;
+}
+.float-button {
+  font-family: var(--font-heading);
+  font-size: 0.76rem;
+  color: var(--navy);
+  background: var(--cream);
+  border: 1.5px solid #111;
+  border-radius: 999px;
+  padding: 0.4rem 1.2rem 0.35rem;
+  box-shadow: 0 3px 0 var(--red-dark), 0 3px 0 1.5px #111;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+.float-button:hover {
+  transform: translateY(1px);
+}
+.float-button.is-active {
+  background: var(--red);
+  color: var(--cream-light);
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--red-dark), 0 1px 0 1.5px #111;
+}
+.float-back {
+  position: absolute;
+  left: 1.25rem;
+  top: 1.25rem;
+  z-index: 2;
+}
+.float-pages {
+  position: absolute;
+  left: 50%;
+  bottom: 1.5rem;
+  z-index: 2;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(20, 20, 20, 0.82);
+  border: 1px solid #333;
 }
 
 /* Smaller windows that rise in (about panels, contact card). */
@@ -286,10 +339,7 @@ body {
 /* ---------- Mixed media: dark crumpled paper with red type, as in Figma ---------- */
 
 .paper-dark {
-  background-color: #2b2b2b;
-  background-image: url("/images/texture-paper.webp");
-  background-size: 1000px;
-  background-blend-mode: multiply;
+  background: #2b2b2b url("/images/texture-paper-dark.webp") top center / 1000px;
   color: var(--paper-red);
 }
 .paper-text {
@@ -304,7 +354,7 @@ body {
   display: grid;
   place-items: center;
   padding: 15%;
-  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.5));
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
 }
 .paper-note p {
   transform: rotate(-4deg);
@@ -482,3 +532,4 @@ button.room-chip {
     transition: none;
   }
 }
+

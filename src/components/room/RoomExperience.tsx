@@ -26,6 +26,7 @@ export default function RoomExperience() {
   const [screenOpen, setScreenOpen] = useState(false);
   const [shown, setShown] = useState<ObjectId | null>(null); // keeps a screen's content while it slides away
   const [showSketch, setShowSketch] = useState(false);
+  const [paused, setPaused] = useState(false);
   const [page, setPage] = useState(0); // which page of a multi-page screen (the books) is showing
   const screenOpenRef = useRef(false);
 
@@ -59,6 +60,17 @@ export default function RoomExperience() {
   useEffect(() => {
     screenOpenRef.current = screenOpen;
   }, [screenOpen]);
+
+  // Once a screen fully covers the room, stop drawing the 3D scene behind it (keeps scrolling smooth).
+  const covers = screenOpen && shown !== "character" && shown !== "phone";
+  useEffect(() => {
+    if (!covers) {
+      setPaused(false);
+      return;
+    }
+    const timer = setTimeout(() => setPaused(true), 700);
+    return () => clearTimeout(timer);
+  }, [covers]);
 
   // Scroll / swipe = guided tour through the desk.
   const step = useCallback(
@@ -118,12 +130,14 @@ export default function RoomExperience() {
   const isAbout = shown === "character";
   const isContact = shown === "phone";
   const touring = focus !== null && focusSource === "scroll";
+  const frameless = Boolean(shownScreen?.frameless);
 
   return (
     <div className="fixed inset-0 overflow-hidden">
       <Canvas
         shadows
         dpr={lite ? [1, 1.25] : [1, 1.5]}
+        frameloop={paused ? "never" : "always"}
         camera={{ fov: CAMERA.fov, near: 0.1, far: 30, position: CAMERA.overview.position }}
         gl={{ antialias: lite, powerPreference: "high-performance" }}
         style={{ touchAction: "none" }}
@@ -205,18 +219,36 @@ export default function RoomExperience() {
       </div>
 
       {/* Every other screen pops up from below (About too, on small screens) */}
-      <div className={`sheet ${isAbout ? "lg:hidden" : ""} ${screenOpen && !isContact ? "is-open" : ""}`} role="dialog" aria-label={shownInfo?.section} aria-hidden={!screenOpen}>
-        <Window
-          file={shownInfo?.file ?? ""}
-          onClose={close}
-          flush
-          tone={shownPage?.tone}
-          tabs={shownScreen && shownScreen.pages.length > 1 ? shownScreen.pages.map((p) => p.label) : undefined}
-          activeTab={page}
-          onTab={setPage}
-        >
-          {shownPage && !isContact && shownPage.render()}
-        </Window>
+      <div
+        className={`sheet ${frameless ? "is-full" : ""} ${isAbout ? "lg:hidden" : ""} ${screenOpen && !isContact ? "is-open" : ""}`}
+        role="dialog"
+        aria-label={shownInfo?.section}
+        aria-hidden={!screenOpen}
+      >
+        {frameless && shownScreen ? (
+          <>
+            {/* No window frame: the work on a black screen, a back button, and page buttons floating at the bottom */}
+            <div key={page} data-scroll className="fullscreen">
+              {shownPage?.render()}
+            </div>
+            <button onClick={close} className="float-button float-back">
+              ← back
+            </button>
+            {shownScreen.pages.length > 1 && (
+              <div className="float-pages" role="tablist" aria-label="Pages">
+                {shownScreen.pages.map((p, i) => (
+                  <button key={p.label} role="tab" aria-selected={i === page} onClick={() => setPage(i)} className={`float-button ${i === page ? "is-active" : ""}`}>
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+          <Window file={shownInfo?.file ?? ""} onClose={close} flush tone={shownPage?.tone}>
+            {shownPage && !isContact && shownPage.render()}
+          </Window>
+        )}
       </div>
 
       {/* Explore menu: every object, reachable by keyboard and large enough to tap */}
