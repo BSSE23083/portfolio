@@ -57,6 +57,13 @@ export const TROPHIES = {
   ],
 };
 
+/** Lamp shadows. Higher `softness` = blurrier edges. */
+export const SHADOWS = {
+  softness: 7,
+  samples: 18,
+  mapSize: 2048,
+};
+
 export const LAMP = {
   /** Position of the lamp shade (hangs from the ceiling above the desk). */
   position: [-0.86, 1.72, 0.5] as Vec3,
@@ -85,7 +92,7 @@ export const CAMERA = {
   /** Seconds for the camera to fly to an object. */
   flyDuration: 1.5,
   /** Seconds to wait on the object, after the camera arrives, before its screen pops up. */
-  screenDelay: 1,
+  screenDelay: 0.5,
 };
 
 export const COLORS = {

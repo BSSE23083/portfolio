@@ -3,7 +3,7 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { COLORS, LAMP, LIGHTS, ROOM, type ThemeName } from "@/config/scene.config";
+import { COLORS, LAMP, LIGHTS, ROOM, SHADOWS, type ThemeName } from "@/config/scene.config";
 import { Cyl } from "./primitives";
 import { Interactive } from "./Interactive";
 
@@ -84,9 +84,12 @@ export function Lamp({ theme, onPull }: { theme: ThemeName; onPull?: () => void 
         decay={1.6}
         distance={7}
         castShadow
-        shadow-mapSize={[2048, 2048]}
-        shadow-bias={-0.0006}
-        shadow-radius={5}
+        shadow-mapSize={[SHADOWS.mapSize, SHADOWS.mapSize]}
+        shadow-bias={-0.0004}
+        shadow-radius={SHADOWS.softness}
+        shadow-blurSamples={SHADOWS.samples}
+        shadow-camera-near={0.3}
+        shadow-camera-far={6}
       />
       <pointLight position={[0, -0.02, 0]} color={light.color} intensity={light.glow} decay={2} distance={5} />
     </group>

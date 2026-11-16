@@ -96,7 +96,7 @@ function GamesScreen() {
     <div className="pad grid min-h-full place-items-center text-center">
       <div>
         <p className="text-dim text-small">game design</p>
-        <h2 className="h-screen-title mt-3">Currently working on it ;)</h2>
+        <h2 className="h-screen-title mt-3">Currently working on my FYP HEHE</h2>
       </div>
     </div>
   );
@@ -122,7 +122,7 @@ function MixedMediaPage() {
       <div className="mt-24 flex flex-col gap-24">
         {/* Pencil: text on the left; the studies sketchbook flush against the right edge (its image is cut there) */}
         <div className="grid items-center gap-16 pl-[6%] md:grid-cols-[1fr_36%]">
-          <p className="paper-text max-w-[40rem] pr-[6%] md:pr-0">
+          <p className="paper-text mx-auto max-w-[40rem] pr-[6%] md:pr-0">
             My pencil sketches are where I explore the fundamentals of light, shadow, and anatomy. It&apos;s my space for slow,
             intentional observation mapping out the wireframes of the physical world before they ever transition into a
             digital canvas.
@@ -132,8 +132,8 @@ function MixedMediaPage() {
           </div>
         </div>
 
-        {/* Second sketchbook: same height as the first (48.5% wide here = the first one's 36% at this image's shape) */}
-        <div className="mx-[6%] md:w-[48.5%]">
+        {/* Second sketchbook: centered, same height as the first (48.5% wide = the first one's 36% at this image's shape) */}
+        <div className="mx-[6%] md:mx-auto md:w-[48.5%]">
           <Shot name="art-pencil-portraits" alt="Sketchbook with pencil portraits" />
         </div>
 

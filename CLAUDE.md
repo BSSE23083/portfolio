@@ -3,6 +3,13 @@
 Project brief and **all decisions agreed with Abdul** (2026-11-16). Read this fully before building.
 Where this file and the original brief disagree, this file wins.
 
+## Revision 7 (2026-11-16)
+
+- Screen pop-up delay is 0.5s (`CAMERA.screenDelay`).
+- VR headset screen reads "Currently working on my FYP HEHE".
+- Room shadows are soft variance shadows (`shadows="variance"` on the Canvas; tune with `SHADOWS` in `scene.config.ts`). PCFSoftShadowMap no longer exists in this three.js version.
+- Mixed Media: first text centered in its column, second sketchbook centered, no shadow on the paper note.
+
 ## Revision 6 (2026-11-16)
 
 - **Mixed Media spacing system:** 6rem between blocks, 4rem between a text and its object. Text uses `--fs-feature` (larger, this page only). The second sketchbook matches the first one's height; the white paper note sits at the far left edge; ocean painting and bag/dragons images are large with clear space around them.
