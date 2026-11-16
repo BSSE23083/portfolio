@@ -1,27 +1,20 @@
 import type { Metadata } from "next";
-import { Fraunces, Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { Nav } from "@/components/site/Nav";
 import { ThemeSync } from "@/components/site/ThemeSync";
 import "./globals.css";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
-const fraunces = Fraunces({ variable: "--font-fraunces", subsets: ["latin"] });
+// Headings use Code 7x5. Body text uses Consolas from the visitor's computer (see globals.css).
+const code7x5 = localFont({ src: "../fonts/Code7x5.ttf", variable: "--font-code7x5", display: "swap" });
 
 export const metadata: Metadata = {
-  title: { default: "Abdul Samad Sohail | Portfolio", template: "%s | Abdul Samad Sohail" },
+  title: "Abdul Samad Sohail | Portfolio",
   description: "I design and build interactive experiences, from apps to games.",
 };
 
-// Applies the saved theme before the page paints (avoids a flash of the wrong theme).
-const themeScript = `try{var t=localStorage.getItem("theme");if(t==="light")document.documentElement.dataset.theme="light"}catch(e){}`;
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} antialiased`} suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
+    <html lang="en" className={code7x5.variable} suppressHydrationWarning>
       <body>
         <ThemeSync />
         <Nav />

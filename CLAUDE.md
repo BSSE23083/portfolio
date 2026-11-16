@@ -3,6 +3,24 @@
 Project brief and **all decisions agreed with Abdul** (2026-11-16). Read this fully before building.
 Where this file and the original brief disagree, this file wins.
 
+## Revision 2 (2026-11-16): these decisions override anything below that conflicts
+
+Abdul reviewed the first build and changed direction:
+
+- **The home screen is only the 3D room.** No 2D section below it and no separate pages. The old `/product`, `/games`, `/brand`, `/art`, `/about` routes and the MDX case studies were removed.
+- **Sections open as pop-up windows over the room.** Click an object: camera flies in, waits 1 second (`CAMERA.screenDelay`), then the screen slides up from below (ease-in). Content is in `src/components/screens/Screens.tsx`; the window frame is `Window.tsx`.
+- **Look: Abdul's Figma style**, not a new design: cream `#ecdcb8`, navy `#2b4066`, red-orange `#c9502e`, retro windows with a grey title bar and three dots ("about.exe"). Mixed Media uses dark crumpled paper with red type.
+- **Fonts:** headings Code 7x5 (`src/fonts/Code7x5.ttf`); body Consolas via the system font stack (the Consolas files are Microsoft's and are not shipped); navbar "Portfolio" wordmark is a rasterized PNG of Birds of Paradise (personal-use font, file not shipped). `fonts/Consolas-Font` and `fonts/birds_of_paradise` are git-ignored.
+- **Navbar:** cream pill with logo, `about` (camera to Abdul), `work` (monitor), `contact` (phone), and the wordmark.
+- **About:** camera centers on Abdul; heading above him, two windows left and right (bio/education/tools/certifications/languages, and experience/skills/contact). Text is in `src/content/about.ts`. On small screens it is one pop-up.
+- **Home text:** "Hello" (Code 7x5) + "I'm Abdul Samad" (Consolas) on the left over a dark gradient.
+- **Room:** plain floor with a small rug (no tiles); every clickable object does a small hop every few seconds (`BOUNCE`); desk objects must not overlap; the monitor screen has no text.
+- **Loading:** Abdul's logo fading in and out.
+- **Scroll** still steps the tour (monitor, VR headset, sketchbook, camera) but only moves the camera; a chip offers "open".
+- **Content:** Abdul's images are in `content/images-everythingelse/`. `python scripts/prepare-assets.py` converts them to `public/images/*.webp` and builds the logo and wordmark files. Object-to-screen mapping is in `src/config/objects.ts`.
+- **Still placeholders:** Rishtay description, SOFTEC and Code Rush case studies, all of Games (VR Podium), Photography and video, Gen AI blurb, LinkedIn.
+- Abdul runs his own `npm run dev` on port 3000; use that server for testing instead of starting another.
+
 ## Project overview
 Personal portfolio for **Abdul Samad Sohail**, a final-year BS Software Engineering student at ITU Lahore and an award-winning UI/UX designer (SOFTEC 2026, GDG ITU Code Rush 2026). Targets **product design** and **game UI/UX / level design** roles; also does photography, video, branding, and art.
 

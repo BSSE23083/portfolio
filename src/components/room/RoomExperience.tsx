@@ -1,31 +1,32 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { PerformanceMonitor } from "@react-three/drei";
 import { CAMERA } from "@/config/scene.config";
-import { CONTACT, OBJECTS, TOUR, type ObjectId } from "@/config/objects";
+import { OBJECTS, TOUR, type ObjectId } from "@/config/objects";
+import { ABOUT } from "@/content/about";
 import { useRoom } from "../store";
+import { AboutLeft, AboutRight, ContactList, SCREENS } from "../screens/Screens";
+import { Window } from "../screens/Window";
 import { Scene } from "./Scene";
 
 /** Objects listed in the on-screen "Explore" menu (also the keyboard / screen reader route into the room). */
 const MENU: ObjectId[] = ["monitor", "vr", "sketchbook", "camera", "books", "phone", "character"];
 
 /**
- * The home page's 3D room.
- * Scrolling steps the camera through the tour (monitor, VR headset, sketchbook, camera);
- * after the last stop the page scrolls on into the normal 2D content.
+ * The home page: only the 3D room.
+ *  - Click an object (or a navbar button): the camera flies to it, waits a second, then its screen pops up from below.
+ *  - Scroll: steps the camera through the tour (monitor, VR headset, sketchbook, camera) without opening screens.
  */
 export default function RoomExperience() {
-  const wrapper = useRef<HTMLDivElement>(null);
-  const lockUntil = useRef(0);
-  const lastIndex = useRef(0);
   const [ready, setReady] = useState(false);
-  const [visible, setVisible] = useState(true);
   const [lite, setLite] = useState(false);
   const [touched, setTouched] = useState(false);
+  const [screenOpen, setScreenOpen] = useState(false);
+  const [shown, setShown] = useState<ObjectId | null>(null); // keeps a screen's content while it slides away
   const [showSketch, setShowSketch] = useState(false);
+  const screenOpenRef = useRef(false);
 
   const focus = useRoom((s) => s.focus);
   const focusSource = useRoom((s) => s.focusSource);
@@ -34,167 +35,204 @@ export default function RoomExperience() {
   const toggleTheme = useRoom((s) => s.toggleTheme);
   const theme = useRoom((s) => s.theme);
 
-  // Lighter rendering on phones and touch devices.
+  // Lighter rendering on phones and touch devices. ?quality=low or ?quality=high forces it.
   useEffect(() => {
-    const param = new URLSearchParams(window.location.search).get("quality"); // ?quality=low or ?quality=high to force
+    const param = new URLSearchParams(window.location.search).get("quality");
     if (param) setLite(param === "low");
     else setLite(window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768);
   }, []);
 
-  // Scroll position -> tour stop.
+  // After a click: camera flies in, pauses on the object, then the screen pops up.
   useEffect(() => {
-    const onScroll = () => {
-      if (performance.now() < lockUntil.current) return;
-      const index = Math.min(TOUR.length, Math.max(0, Math.round(window.scrollY / window.innerHeight)));
-      if (index === lastIndex.current) return;
-      lastIndex.current = index;
-      setFocus(index === 0 ? null : TOUR[index - 1], "scroll");
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [setFocus]);
-
-  // Click / keyboard selection -> keep the scroll position in step with the tour.
-  useEffect(() => {
-    if (focusSource !== "click") return;
+    setScreenOpen(false);
+    if (!focus) return;
     setTouched(true);
-    const tourIndex = focus ? TOUR.indexOf(focus) + 1 : 0;
-    if (focus && tourIndex === 0) return; // not a tour stop (phone, books, Abdul): stay where we are
-    lastIndex.current = tourIndex;
-    lockUntil.current = performance.now() + 1200;
-    window.scrollTo({ top: tourIndex * window.innerHeight, behavior: "smooth" });
+    setShown(focus);
+    if (focusSource !== "click" || !OBJECTS[focus].screen) return;
+    const wait = (CAMERA.flyDuration + CAMERA.screenDelay) * 1000;
+    const timer = setTimeout(() => setScreenOpen(true), wait);
+    return () => clearTimeout(timer);
   }, [focus, focusSource]);
 
-  // Stop rendering when the room is scrolled out of view.
   useEffect(() => {
-    if (!wrapper.current) return;
-    const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { threshold: 0.01 });
-    observer.observe(wrapper.current);
-    return () => observer.disconnect();
-  }, []);
+    screenOpenRef.current = screenOpen;
+  }, [screenOpen]);
 
-  // Escape returns to the desk. In development, "S" overlays the reference sketch.
+  // Scroll / swipe = guided tour through the desk.
+  const step = useCallback(
+    (direction: 1 | -1) => {
+      const current = useRoom.getState().focus;
+      const index = current ? TOUR.indexOf(current) + 1 : 0; // 0 = overview
+      const next = Math.min(TOUR.length, Math.max(0, index + direction));
+      if (next === index && current && TOUR.includes(current)) return;
+      setFocus(next === 0 ? null : TOUR[next - 1], "scroll");
+    },
+    [setFocus],
+  );
+
   useEffect(() => {
+    let cooldown = 0;
+    let touchY: number | null = null;
+    const insideWindow = (target: EventTarget | null) => target instanceof Element && target.closest("[data-scroll]");
+
+    const onWheel = (e: WheelEvent) => {
+      if (screenOpenRef.current || insideWindow(e.target)) return;
+      if (Math.abs(e.deltaY) < 10 || performance.now() < cooldown) return;
+      cooldown = performance.now() + 1100;
+      step(e.deltaY > 0 ? 1 : -1);
+    };
+    const onTouchStart = (e: TouchEvent) => {
+      touchY = screenOpenRef.current || insideWindow(e.target) ? null : e.touches[0].clientY;
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      if (touchY === null) return;
+      const dy = touchY - e.changedTouches[0].clientY;
+      if (Math.abs(dy) > 60) step(dy > 0 ? 1 : -1);
+      touchY = null;
+    };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setFocus(null);
       if (process.env.NODE_ENV === "development" && e.key.toLowerCase() === "s" && !e.ctrlKey && !e.metaKey) {
         setShowSketch((v) => !v);
       }
     };
+    window.addEventListener("wheel", onWheel, { passive: true });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [setFocus]);
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [step, setFocus]);
 
-  const info = focus ? OBJECTS[focus] : null;
+  const close = () => setFocus(null);
+  const shownInfo = shown ? OBJECTS[shown] : null;
+  const shownScreen = shownInfo?.screen ? SCREENS[shownInfo.screen] : null;
+  const isAbout = shown === "character";
+  const isContact = shown === "phone";
+  const touring = focus !== null && focusSource === "scroll";
 
   return (
-    <div ref={wrapper} style={{ height: `${(TOUR.length + 1) * 100}dvh` }} className="relative">
-      <div className="sticky top-0 h-dvh w-full overflow-hidden">
-        <Canvas
-          shadows
-          dpr={lite ? [1, 1.25] : [1, 1.5]}
-          frameloop={visible ? "always" : "never"}
-          camera={{ fov: CAMERA.fov, near: 0.1, far: 30, position: CAMERA.overview.position }}
-          gl={{ antialias: lite, powerPreference: "high-performance" }}
-          style={{ touchAction: "pan-y" }}
-          onCreated={() => setReady(true)}
-          onPointerMissed={() => setHovered(null)}
-          aria-label="3D model of Abdul's desk. Use the Explore menu to visit each object."
-          role="img"
-        >
-          <Suspense fallback={null}>
-            {/* If the frame rate stays low, switch off the heavier effects automatically. */}
-            <PerformanceMonitor bounds={() => [35, 200]} flipflops={1} onDecline={() => setLite(true)} />
-            <Scene lite={lite} />
-          </Suspense>
-        </Canvas>
+    <div className="fixed inset-0 overflow-hidden">
+      <Canvas
+        shadows
+        dpr={lite ? [1, 1.25] : [1, 1.5]}
+        camera={{ fov: CAMERA.fov, near: 0.1, far: 30, position: CAMERA.overview.position }}
+        gl={{ antialias: lite, powerPreference: "high-performance" }}
+        style={{ touchAction: "none" }}
+        onCreated={() => setReady(true)}
+        onPointerMissed={() => setHovered(null)}
+        aria-label="3D model of Abdul's desk. Use the navigation or the Explore menu to visit each object."
+        role="img"
+      >
+        <Suspense fallback={null}>
+          {/* If the frame rate stays low, switch off the heavier effects automatically. */}
+          <PerformanceMonitor bounds={() => [35, 200]} flipflops={1} onDecline={() => setLite(true)} />
+          <Scene lite={lite} />
+        </Suspense>
+      </Canvas>
 
-        {showSketch && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src="/dev/room-sketch.jpg" alt="" className="pointer-events-none absolute inset-0 h-full w-full object-contain opacity-40 mix-blend-difference" />
-        )}
+      {showSketch && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src="/dev/room-sketch.jpg" alt="" className="pointer-events-none absolute inset-0 h-full w-full object-contain opacity-40 mix-blend-difference" />
+      )}
 
-        {/* Loading screen */}
-        <div
-          aria-hidden={ready}
-          className={`pointer-events-none absolute inset-0 z-30 grid place-items-center bg-[var(--bg)] transition-opacity duration-700 ${ready ? "opacity-0" : "opacity-100"}`}
-        >
-          <div className="text-center">
-            <div className="mx-auto h-10 w-10 animate-pulse rounded-full bg-[var(--accent)] shadow-[0_0_40px_var(--accent)]" />
-            <p className="mt-4 text-sm text-[var(--muted)]">Switching on the lamp…</p>
-          </div>
+      {/* Home text with a dark gradient behind it (overview only) */}
+      <div className={`pointer-events-none absolute inset-0 transition-opacity duration-700 ${focus ? "opacity-0" : "opacity-100"}`}>
+        <div className="absolute inset-0 bg-[linear-gradient(105deg,rgba(6,7,12,0.92)_0%,rgba(6,7,12,0.72)_26%,rgba(6,7,12,0)_58%)]" />
+        <div className="absolute left-6 top-[38%] -translate-y-1/2 md:left-16">
+          <h1 className="font-heading text-6xl leading-none text-[var(--cream)] md:text-8xl">Hello</h1>
+          <p className="mt-4 text-xl text-[var(--cream)] md:mt-6 md:text-3xl">I&apos;m Abdul Samad</p>
         </div>
-
-        {/* Intro (overview only) */}
-        <div className={`pointer-events-none absolute left-5 top-20 max-w-[18rem] transition-opacity duration-500 md:left-10 md:top-24 md:max-w-sm ${focus ? "opacity-0" : "opacity-100"}`}>
-          <p className="room-kicker">Abdul Samad Sohail</p>
-          <h1 className="font-display mt-2 text-3xl leading-[1.08] text-[var(--room-text)] md:text-[2.75rem]">
-            I design and build interactive experiences, from apps to games.
-          </h1>
-        </div>
-
-        {/* First-load hint */}
-        <div className={`pointer-events-none absolute inset-x-0 bottom-24 flex justify-center transition-opacity duration-700 md:bottom-8 ${focus || touched ? "opacity-0" : "opacity-100"}`}>
-          <p className="room-chip">Click around my desk to explore · scroll for a tour</p>
-        </div>
-
-        {/* Back to desk */}
-        {focus && (
-          <button onClick={() => setFocus(null)} className="room-button absolute left-5 top-20 md:left-10 md:top-24">
-            ← Back to desk
-          </button>
-        )}
-
-        {/* Panel for the selected object */}
-        {info && focus && (
-          <div className="room-panel absolute inset-x-4 bottom-24 md:inset-x-auto md:bottom-10 md:left-10 md:w-[22rem]" role="dialog" aria-label={info.section}>
-            <p className="room-kicker">{info.label}</p>
-            <h2 className="font-display mt-1 text-2xl text-[var(--text)]">{info.section}</h2>
-            <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{info.blurb}</p>
-            {focus === "phone" && (
-              <ul className="mt-4 space-y-2 text-sm">
-                {CONTACT.map((c) => (
-                  <li key={c.label} className="flex justify-between gap-4 border-t border-[var(--line)] pt-2">
-                    <span className="text-[var(--muted)]">{c.label}</span>
-                    <a href={c.href} className="text-[var(--text)] underline decoration-[var(--accent)] underline-offset-4 hover:text-[var(--accent)]">
-                      {c.value}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            )}
-            {info.href && (
-              <Link href={info.href} className="site-button mt-5">
-                Enter {info.section} →
-              </Link>
-            )}
-          </div>
-        )}
-
-        {/* Explore menu: every object, reachable by keyboard and large enough to tap */}
-        <nav aria-label="Explore the desk" className="absolute inset-x-0 bottom-4 z-10 flex gap-2 overflow-x-auto px-4 md:inset-x-auto md:bottom-auto md:right-6 md:top-1/2 md:-translate-y-1/2 md:flex-col md:overflow-visible md:px-0">
-          {MENU.map((id) => (
-            <button
-              key={id}
-              onClick={() => setFocus(focus === id ? null : id)}
-              onFocus={() => setHovered(id)}
-              onBlur={() => setHovered(null)}
-              onMouseEnter={() => setHovered(id)}
-              onMouseLeave={() => setHovered(null)}
-              aria-pressed={focus === id}
-              aria-label={`${OBJECTS[id].label}: ${OBJECTS[id].section}`}
-              className={`room-menu-item ${focus === id ? "is-active" : ""}`}
-            >
-              <span className="room-menu-dot" />
-              <span className="room-menu-text">{OBJECTS[id].section}</span>
-            </button>
-          ))}
-          <button onClick={toggleTheme} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode (lamp pull cord)`} className="room-menu-item">
-            <span className="room-menu-dot" />
-            <span className="room-menu-text">{theme === "dark" ? "Day mode" : "Night mode"}</span>
-          </button>
-        </nav>
       </div>
+
+      {/* Loading: logo fading in and out */}
+      <div
+        aria-hidden={ready}
+        className={`pointer-events-none absolute inset-0 z-50 grid place-items-center bg-[var(--night)] transition-opacity duration-700 ${ready ? "opacity-0" : "opacity-100"}`}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo-cream.png" alt="Loading" className="loader-logo h-28 w-auto" />
+      </div>
+
+      {/* First-load hint */}
+      <div className={`pointer-events-none absolute inset-x-0 bottom-24 flex justify-center transition-opacity duration-700 md:bottom-8 ${focus || touched || !ready ? "opacity-0" : "opacity-100"}`}>
+        <p className="room-chip">Click around my desk to explore · scroll for a tour</p>
+      </div>
+
+      {/* While touring by scroll: name of the stop and a button to open its screen */}
+      {touring && focus && !screenOpen && (
+        <div className="absolute inset-x-0 bottom-24 z-10 flex justify-center gap-2 md:bottom-8">
+          <button onClick={close} className="room-chip">
+            ← desk
+          </button>
+          <button onClick={() => setScreenOpen(true)} className="room-chip">
+            <span className="font-heading text-xs">{OBJECTS[focus].section}</span> · open
+          </button>
+        </div>
+      )}
+
+      {/* About: heading above him, text either side (wide screens) */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 top-24 z-20 hidden lg:block">
+        <h2 className={`rise font-heading absolute inset-x-0 top-2 text-center text-4xl text-[var(--cream)] [text-shadow:0_3px_0_#111] ${screenOpen && isAbout ? "is-open" : ""}`}>
+          {ABOUT.heading}
+        </h2>
+        <div className={`rise absolute bottom-6 left-6 top-20 w-[30vw] max-w-[27rem] ${screenOpen && isAbout ? "is-open" : ""}`}>
+          <Window file="about.exe" onClose={close} className="max-h-full">
+            <AboutLeft />
+          </Window>
+        </div>
+        <div className={`rise absolute bottom-6 right-6 top-20 w-[30vw] max-w-[27rem] ${screenOpen && isAbout ? "is-open" : ""}`}>
+          <Window file="experience.exe" onClose={close} className="max-h-full">
+            <AboutRight />
+          </Window>
+        </div>
+      </div>
+
+      {/* Contact: a small card beside the phone */}
+      <div className={`rise absolute inset-x-4 bottom-24 z-20 md:inset-x-auto md:bottom-12 md:right-[8vw] md:w-[26rem] ${screenOpen && isContact ? "is-open" : ""}`}>
+        <Window file="contact.exe" onClose={close}>
+          <h2 className="h-screen-title mb-4">Contact</h2>
+          <ContactList />
+        </Window>
+      </div>
+
+      {/* Every other screen pops up from below (About too, on small screens) */}
+      <div className={`sheet ${isAbout ? "lg:hidden" : ""} ${screenOpen && !isContact ? "is-open" : ""}`} role="dialog" aria-label={shownInfo?.section} aria-hidden={!screenOpen}>
+        <Window file={shownInfo?.file ?? ""} onClose={close} dark={shownScreen?.dark}>
+          {shownScreen && !isContact && shownScreen.render()}
+        </Window>
+      </div>
+
+      {/* Explore menu: every object, reachable by keyboard and large enough to tap */}
+      <nav
+        aria-label="Explore the desk"
+        className={`absolute inset-x-0 bottom-4 z-10 flex gap-2 overflow-x-auto px-4 transition-opacity md:inset-x-auto md:bottom-auto md:right-5 md:top-1/2 md:-translate-y-1/2 md:flex-col md:overflow-visible md:px-0 ${screenOpen ? "pointer-events-none opacity-0" : ""}`}
+      >
+        {MENU.map((id) => (
+          <button
+            key={id}
+            onClick={() => setFocus(focus === id ? null : id)}
+            onFocus={() => setHovered(id)}
+            onBlur={() => setHovered(null)}
+            onMouseEnter={() => setHovered(id)}
+            onMouseLeave={() => setHovered(null)}
+            aria-pressed={focus === id}
+            aria-label={`${OBJECTS[id].label}: ${OBJECTS[id].section}`}
+            className={`room-menu-item ${focus === id ? "is-active" : ""}`}
+          >
+            <span className="room-menu-dot" />
+            <span className="room-menu-text">{OBJECTS[id].section}</span>
+          </button>
+        ))}
+        <button onClick={toggleTheme} aria-label={`Switch to ${theme === "dark" ? "day" : "night"} (lamp pull cord)`} className="room-menu-item">
+          <span className="room-menu-dot" />
+          <span className="room-menu-text">{theme === "dark" ? "Day mode" : "Night mode"}</span>
+        </button>
+      </nav>
     </div>
   );
 }

@@ -11,12 +11,11 @@ export function Monitor(props: ThreeElements["group"]) {
   const screen = useCanvasTexture(512, 288, (ctx, w, h) => {
     ctx.fillStyle = "#15161c";
     ctx.fillRect(0, 0, w, h);
+    // Simple layout blocks only (no text: it looked blurry at this size)
     ctx.fillStyle = "#f2ead9";
-    ctx.font = "600 20px sans-serif";
-    ctx.fillText("Product Design", 24, 38);
-    ctx.fillStyle = "#8a8fa3";
-    ctx.font = "12px sans-serif";
-    ctx.fillText("Case studies", 24, 58);
+    ctx.fillRect(24, 26, 150, 12);
+    ctx.fillStyle = "#5a5f73";
+    ctx.fillRect(24, 48, 90, 8);
     THUMBS.forEach((color, i) => {
       const x = 24 + (i % 2) * 238;
       const y = 76 + Math.floor(i / 2) * 100;

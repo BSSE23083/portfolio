@@ -1,34 +1,27 @@
 "use client";
 
-import * as THREE from "three";
-import { COLORS, LIGHTS, ROOM, type ThemeName } from "@/config/scene.config";
-import { Box, useCanvasTexture } from "./primitives";
+import { COLORS, LIGHTS, ROOM, RUG, type ThemeName } from "@/config/scene.config";
+import { Box } from "./primitives";
 
-/** Walls, skirting boards, tiled floor, ceiling and the window behind the curtains. */
+/** Walls, skirting boards, plain floor with a rug, ceiling and the window behind the curtains. */
 export function Room({ theme }: { theme: ThemeName }) {
   const L = ROOM.wallLength;
   const H = ROOM.height;
-
-  // One tile drawn once, then repeated across the floor (a single draw call).
-  const tiles = useCanvasTexture(256, 256, (ctx, w, h) => {
-    ctx.fillStyle = COLORS.grout;
-    ctx.fillRect(0, 0, w, h);
-    ctx.fillStyle = COLORS.tile;
-    ctx.fillRect(3, 3, w - 6, h - 6);
-    // faint variation so the tiles don't look flat
-    ctx.fillStyle = "rgba(255,255,255,0.06)";
-    ctx.fillRect(3, 3, w - 6, (h - 6) / 2);
-  });
-  tiles.wrapS = tiles.wrapT = THREE.RepeatWrapping;
-  tiles.repeat.set(L / ROOM.tileSize, L / ROOM.tileSize);
 
   return (
     <group>
       {/* Floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-L / 2, 0, L / 2]} receiveShadow>
         <planeGeometry args={[L, L]} />
-        <meshStandardMaterial map={tiles} roughness={0.95} />
+        <meshStandardMaterial color={COLORS.floor} roughness={0.95} />
       </mesh>
+
+      {/* Small rug under the chair */}
+      <group position={RUG.position} rotation={[0, RUG.rotationY, 0]}>
+        <Box size={[RUG.size[0], 0.012, RUG.size[1]]} position={[0, 0.006, 0]} color={COLORS.rug} roughness={1} castShadow={false} />
+        <Box size={[RUG.size[0] - 0.16, 0.004, RUG.size[1] - 0.16]} position={[0, 0.0135, 0]} color={COLORS.rugBorder} roughness={1} castShadow={false} />
+        <Box size={[RUG.size[0] - 0.22, 0.004, RUG.size[1] - 0.22]} position={[0, 0.015, 0]} color={COLORS.rug} roughness={1} castShadow={false} />
+      </group>
 
       {/* Window wall (left on screen) and right wall */}
       <Box size={[L, H, 0.1]} position={[-L / 2, H / 2, -0.05]} color={COLORS.wall} castShadow={false} />

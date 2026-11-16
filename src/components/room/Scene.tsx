@@ -49,29 +49,29 @@ export function Scene({ lite = false }: { lite?: boolean }) {
         {/* On the riser, left to right */}
         <Speaker position={[-0.53, RISER_TOP, -0.2]} rotation={[0, 0.25, 0]} />
         <Holder kind="pencils" position={[-0.435, RISER_TOP, -0.19]} />
-        <Interactive id="monitor" labelY={0.56} position={[-0.1, RISER_TOP, -0.2]} rotation={[0, 0.1, 0]}>
+        <Speaker size={[0.07, 0.07, 0.07]} position={[-0.31, RISER_TOP, -0.17]} rotation={[0, 0.3, 0]} />
+        <Interactive id="monitor" labelY={0.56} position={[-0.07, RISER_TOP, -0.2]} rotation={[0, 0.1, 0]}>
           <Monitor />
         </Interactive>
-        <Speaker position={[0.245, RISER_TOP, -0.2]} rotation={[0, -0.15, 0]} />
-        <Holder kind="brushes" position={[0.335, RISER_TOP, -0.19]} />
-        <Holder kind="pencils" position={[0.4, RISER_TOP, -0.14]} scale={0.6} />
+        <Speaker position={[0.262, RISER_TOP, -0.2]} rotation={[0, -0.15, 0]} />
+        <Holder kind="brushes" position={[0.35, RISER_TOP, -0.2]} />
+        <Holder kind="pencils" position={[0.385, RISER_TOP, -0.125]} scale={0.55} />
         <Interactive id="books" labelY={0.36} position={[0.42, RISER_TOP, -0.2]}>
           <Books pulled={focus === "books"} />
         </Interactive>
 
         {/* On the desktop */}
-        <Speaker size={[0.07, 0.07, 0.07]} position={[0.275, DESK_TOP, -0.055]} rotation={[0, -0.3, 0]} />
         <Interactive id="phone" labelY={0.14} position={[-0.55, DESK_TOP, -0.02]} rotation={[0, 0.1, 0]}>
           <Phone on={focus === "phone"} />
         </Interactive>
-        <Interactive id="camera" labelY={0.22} position={[-0.27, DESK_TOP, -0.04]} rotation={[0, -0.55, 0]}>
+        <Interactive id="camera" labelY={0.22} position={[-0.3, DESK_TOP, -0.028]} rotation={[0, -1.25, 0]}>
           <DSLRCamera />
         </Interactive>
-        <Interactive id="sketchbook" labelY={0.14} position={[-0.33, DESK_TOP, 0.175]} rotation={[0, 0.12, 0]} scale={0.9}>
+        <Interactive id="sketchbook" labelY={0.14} position={[-0.33, DESK_TOP, 0.19]} rotation={[0, 0.05, 0]} scale={0.78}>
           <Sketchbook flipping={focus === "sketchbook"} />
         </Interactive>
         <Laptop position={[0.04, DESK_TOP, 0.13]} />
-        <Interactive id="vr" labelY={0.22} position={[0.45, DESK_TOP, 0.06]} rotation={[0, -0.5, 0]}>
+        <Interactive id="vr" labelY={0.22} position={[0.4, DESK_TOP, 0.13]} rotation={[0, -0.35, 0]}>
           <VRHeadset />
         </Interactive>
       </Desk>
@@ -106,7 +106,7 @@ function SeatedAbdul({ waving }: { waving: boolean }) {
   return (
     <group ref={group} position={SEAT.position} rotation={[0, SEAT.rotationY, 0]}>
       <pointLight ref={faceLight} position={[0.25, 1.45, -1.0]} color="#ffd9b0" intensity={0} distance={3} decay={1.5} />
-      <Interactive id="character" labelY={1.5}>
+      <Interactive id="character" labelY={1.5} bounce={0.5}>
         <Chair />
         <Character waving={waving} />
       </Interactive>

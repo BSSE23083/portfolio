@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useRoom } from "../store";
 
-/** Keeps the theme in the store, the <html data-theme> attribute and localStorage in step. */
+/** Remembers the day / night choice (lamp cord) between visits. */
 export function ThemeSync() {
   const theme = useRoom((s) => s.theme);
   const loaded = useRef(false);
@@ -11,11 +11,12 @@ export function ThemeSync() {
   useEffect(() => {
     if (!loaded.current) {
       loaded.current = true;
-      // First run: adopt the theme saved from a previous visit.
-      if (document.documentElement.dataset.theme === "light") {
-        useRoom.getState().setTheme("light");
-        return;
-      }
+      try {
+        if (localStorage.getItem("theme") === "light") {
+          useRoom.getState().setTheme("light");
+          return;
+        }
+      } catch {}
     }
     document.documentElement.dataset.theme = theme;
     try {

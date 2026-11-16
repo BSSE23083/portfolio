@@ -1,57 +1,43 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import type { ObjectId } from "@/config/objects";
 import { useRoom } from "../store";
 
-const LINKS = [
-  { href: "/product", label: "Product" },
-  { href: "/games", label: "Games" },
-  { href: "/brand", label: "Brand" },
-  { href: "/art", label: "Art" },
-  { href: "/about", label: "About" },
+/** Each button moves the camera to an object in the room. */
+const BUTTONS: { label: string; target: ObjectId }[] = [
+  { label: "about", target: "character" },
+  { label: "work", target: "monitor" },
+  { label: "contact", target: "phone" },
 ];
 
-/** Always-visible navigation, so nobody has to use the 3D room to get around. */
 export function Nav() {
-  const pathname = usePathname();
-  const theme = useRoom((s) => s.theme);
-  const toggleTheme = useRoom((s) => s.toggleTheme);
-  const home = pathname === "/";
+  const focus = useRoom((s) => s.focus);
+  const setFocus = useRoom((s) => s.setFocus);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 border-b border-[var(--line)] bg-[var(--glass)] backdrop-blur-md">
-      <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4 md:px-6">
-        <Link href="/" className="font-display mr-auto text-lg text-[var(--text)]" aria-label="Abdul Samad Sohail, home">
-          Abdul<span className="text-[var(--accent)]">.</span>
-        </Link>
-        <nav aria-label="Main" className="flex items-center gap-0.5 overflow-x-auto text-sm">
-          {LINKS.map((link) => {
-            const active = pathname.startsWith(link.href);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                aria-current={active ? "page" : undefined}
-                className={`rounded-full px-2.5 py-1.5 transition-colors hover:text-[var(--accent)] md:px-3 ${active ? "text-[var(--accent)]" : "text-[var(--text)]"}`}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
-        {home && (
-          <a href="#portfolio" className="hidden rounded-full border border-[var(--line)] px-3 py-1.5 text-sm text-[var(--text)] hover:border-[var(--accent)] sm:block">
-            Skip to portfolio ↓
-          </a>
-        )}
-        <button
-          onClick={toggleTheme}
-          aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-          className="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-full border border-[var(--line)] text-[var(--text)] hover:border-[var(--accent)]"
-        >
-          <span aria-hidden>{theme === "dark" ? "☀" : "☾"}</span>
+    <header className="pointer-events-none fixed inset-x-0 top-3 z-40 px-3 md:top-4 md:px-6">
+      <div className="navbar pointer-events-auto mx-auto flex h-14 max-w-5xl items-center gap-2 px-4 md:h-16 md:px-7">
+        <button onClick={() => setFocus(null)} aria-label="Back to the desk (home)" className="shrink-0 cursor-pointer">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-navy.png" alt="Abdul Samad Sohail logo" className="h-8 w-auto md:h-10" />
         </button>
+
+        <nav aria-label="Main" className="mx-auto flex items-center gap-2 md:gap-3">
+          {BUTTONS.map((button) => (
+            <button
+              key={button.label}
+              onClick={() => setFocus(button.target)}
+              aria-current={focus === button.target ? "true" : undefined}
+              className={`nav-button max-md:!min-w-0 max-md:!px-3 ${focus === button.target ? "is-active" : ""}`}
+            >
+              {button.label}
+            </button>
+          ))}
+        </nav>
+
+        {/* "Portfolio" in Birds of Paradise (rasterized: see scripts/prepare-assets.py) */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/wordmark-portfolio.png" alt="Portfolio" className="hidden h-9 w-auto shrink-0 sm:block md:h-11" />
       </div>
     </header>
   );

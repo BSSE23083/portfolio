@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# fonts that must not be redistributed, and OS files
+/fonts/Consolas-Font/
+/fonts/birds_of_paradise/
+desktop.ini
+tsconfig.tsbuildinfo

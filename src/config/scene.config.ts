@@ -11,7 +11,6 @@ type Vec3 = [number, number, number];
 export const ROOM = {
   wallLength: 4.6,
   height: 2.8,
-  tileSize: 0.6,
   skirtingHeight: 0.08,
 };
 
@@ -32,6 +31,20 @@ export const SEAT = {
   /** Where the chair swivels to when the character waves at the camera. */
   waveRotationY: 2.3,
   waveSlideBack: 0.38,
+};
+
+/** Small rug under the chair. */
+export const RUG = {
+  position: [-0.66, 0, 1.2] as Vec3,
+  size: [1.3, 0.95] as [number, number],
+  rotationY: 0.05,
+};
+
+/** The little hop that shows an object is clickable. */
+export const BOUNCE = {
+  height: 0.02,
+  every: 3.6, // seconds between hops
+  duration: 0.6,
 };
 
 export const LAMP = {
@@ -61,14 +74,17 @@ export const CAMERA = {
   dragLimit: 0.3,
   /** Seconds for the camera to fly to an object. */
   flyDuration: 1.5,
+  /** Seconds to wait on the object, after the camera arrives, before its screen pops up. */
+  screenDelay: 1,
 };
 
 export const COLORS = {
   wall: "#e9e2d3",
   skirting: "#f3eee3",
   ceiling: "#ded7c8",
-  tile: "#d9d2c3",
-  grout: "#a79f90",
+  floor: "#cdbfa6",
+  rug: "#8f4a3a",
+  rugBorder: "#ead9b6",
   curtain: "#a8977e",
   rod: "#4a4038",
   windowFrame: "#f1ece1",
