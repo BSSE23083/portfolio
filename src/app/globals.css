@@ -15,6 +15,7 @@
   /* One type scale for the whole site. Change sizes here only. */
   --fs-body: 1.0625rem; /* all paragraphs and lists */
   --fs-small: 0.85rem; /* labels, captions, dates */
+  --fs-feature: 1.3rem; /* Mixed Media only: larger text on the art page */
   --lh-body: 1.65;
 
   --font-heading: var(--font-code7x5), "Courier New", monospace;
@@ -358,7 +359,7 @@ body {
   color: var(--paper-red);
 }
 .paper-text {
-  font-size: var(--fs-body);
+  font-size: var(--fs-feature);
   line-height: var(--lh-body);
 }
 .paper-note {

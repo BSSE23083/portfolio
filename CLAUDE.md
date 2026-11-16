@@ -3,6 +3,11 @@
 Project brief and **all decisions agreed with Abdul** (2026-11-16). Read this fully before building.
 Where this file and the original brief disagree, this file wins.
 
+## Revision 6 (2026-11-16)
+
+- **Mixed Media spacing system:** 6rem between blocks, 4rem between a text and its object. Text uses `--fs-feature` (larger, this page only). The second sketchbook matches the first one's height; the white paper note sits at the far left edge; ocean painting and bag/dragons images are large with clear space around them.
+- **Social:** the Media Club text is centered in the space left of the laptop.
+
 ## Revision 5 (2026-11-16): overrides earlier revisions where they conflict
 
 - **One type scale for the whole site**, set in `globals.css`: `--fs-body` (all paragraphs and lists) and `--fs-small` (labels, captions). Use `.text-body` / `.text-small` / `.paper-text`; do not hard-code other text sizes.

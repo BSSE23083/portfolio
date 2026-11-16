@@ -105,8 +105,9 @@ function GamesScreen() {
 /* ---------- Sketchbook: mixed media (layout follows the Figma frame) ---------- */
 
 function MixedMediaPage() {
+  // Spacing on this page: 6rem between blocks, 4rem between a text and the object it describes.
   return (
-    <div className="paper-dark pb-32 pt-16">
+    <div className="paper-dark pb-40 pt-16">
       {/* Title in red script with a scribbled underline */}
       <div className="mx-auto w-[min(72%,30rem)]">
         <h2>
@@ -118,27 +119,27 @@ function MixedMediaPage() {
         </svg>
       </div>
 
-      {/* Pencil: text on the left; the studies sketchbook sits at the far right, half off the screen */}
-      <div className="mt-14 grid items-center gap-10 pl-[6%] md:grid-cols-[1fr_minmax(0,36%)]">
-        <p className="paper-text max-w-[36rem] pr-[6%] md:pr-0">
-          My pencil sketches are where I explore the fundamentals of light, shadow, and anatomy. It&apos;s my space for slow,
-          intentional observation mapping out the wireframes of the physical world before they ever transition into a digital
-          canvas.
-        </p>
-        {/* This image is cut on its right side, so it sits flush against the screen edge */}
-        <div className="ml-auto w-[70%] md:w-full">
-          <Shot name="art-pencil-studies" alt="Sketchbook with pencil studies of a skull, an ear and an eye" />
+      <div className="mt-24 flex flex-col gap-24">
+        {/* Pencil: text on the left; the studies sketchbook flush against the right edge (its image is cut there) */}
+        <div className="grid items-center gap-16 pl-[6%] md:grid-cols-[1fr_36%]">
+          <p className="paper-text max-w-[40rem] pr-[6%] md:pr-0">
+            My pencil sketches are where I explore the fundamentals of light, shadow, and anatomy. It&apos;s my space for slow,
+            intentional observation mapping out the wireframes of the physical world before they ever transition into a
+            digital canvas.
+          </p>
+          <div className="ml-auto w-[70%] md:w-full">
+            <Shot name="art-pencil-studies" alt="Sketchbook with pencil studies of a skull, an ear and an eye" />
+          </div>
         </div>
-      </div>
 
-      <div className="mx-auto max-w-[72rem] px-[6%]">
-        <div className="mt-10 w-full md:-mt-24 md:w-[50%]">
+        {/* Second sketchbook: same height as the first (48.5% wide here = the first one's 36% at this image's shape) */}
+        <div className="mx-[6%] md:w-[48.5%]">
           <Shot name="art-pencil-portraits" alt="Sketchbook with pencil portraits" />
         </div>
 
-        {/* Oil: a taped paper note beside the ocean painting, dragons below */}
-        <div className="mt-20 grid items-center gap-10 md:grid-cols-[1.2fr_1fr]">
-          <div className="paper-note">
+        {/* Oil: the white page sits at the far left of the screen, the ocean painting beside it */}
+        <div className="grid items-center gap-16 pr-[6%] md:grid-cols-[44%_1fr]">
+          <div className="paper-note mx-[6%] md:-ml-[5%] md:mr-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/images/texture-tape.webp" alt="" className="tape -right-[10%] -top-[4%] rotate-[14deg]" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -149,22 +150,26 @@ function MixedMediaPage() {
               engage with the organic complexity of color and rendering in its most physical, vibrant form.
             </p>
           </div>
-          <div className="mx-auto w-[60%] md:w-[58%]">
+          <div className="mx-auto w-[56%] md:w-[46%]">
             <Shot name="art-oil-ocean" alt="Oil painting of the ocean, taped to the page" />
           </div>
         </div>
-        <div className="mx-auto mt-16 w-full md:w-[70%]">
+
+        {/* Painted bag and dragons */}
+        <div className="mx-auto w-[88%] md:w-[56%]">
           <Shot name="art-oil-dragons" alt="Oil paintings of dragons, taped to the page" />
         </div>
 
         {/* Pen: centered text, then the big notebook */}
-        <p className="paper-text mx-auto mt-20 max-w-[50rem] text-center">
-          These are my pen sketches born at random moments, in the margins of notebooks or on the backs of receipts. Using pen
-          and ink forces a certain level of confidence there is no undo button. I love the raw, unedited energy of capturing a
-          face or a scene in a few rapid strokes, wherever inspiration happens to strike.
-        </p>
-        <div className="mx-auto mt-10 w-full md:w-[86%]">
-          <Shot name="art-pen" alt="Sketchbook with pen sketches of hands, a car and a camera" />
+        <div className="flex flex-col items-center gap-16 px-[6%]">
+          <p className="paper-text max-w-[54rem] text-center">
+            These are my pen sketches born at random moments, in the margins of notebooks or on the backs of receipts. Using
+            pen and ink forces a certain level of confidence there is no undo button. I love the raw, unedited energy of
+            capturing a face or a scene in a few rapid strokes, wherever inspiration happens to strike.
+          </p>
+          <div className="w-full md:w-[72%]">
+            <Shot name="art-pen" alt="Sketchbook with pen sketches of hands, a car and a camera" />
+          </div>
         </div>
       </div>
     </div>
@@ -272,8 +277,8 @@ function SocialPage() {
   return (
     <div>
       {/* ITU Media Club */}
-      <div className="grid items-center gap-8 bg-[#e4e3c0] py-12 pl-[7%] text-[#2a2a22] md:grid-cols-[0.9fr_1.4fr]">
-        <p className="text-body max-w-[30rem] pr-[7%] md:pr-0">
+      <div className="grid items-center gap-[7%] bg-[#e4e3c0] py-12 pl-[7%] text-[#2a2a22] md:grid-cols-[minmax(0,30rem)_1fr]">
+        <p className="text-body mx-auto max-w-[30rem] pr-[7%] md:pr-0">
           As the Social Media Head at ITU <strong>Media Club</strong>, I architect the club&apos;s digital identity. I use
           Figma for structured layouts and Photoshop for high-fidelity asset manipulation, transforming campus events into
           cohesive, high-engagement visual campaigns.
