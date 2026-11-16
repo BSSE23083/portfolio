@@ -94,6 +94,8 @@ for file in os.listdir(SRC):
         continue  # small decorative vectors etc. are not needed
     im = Image.open(os.path.join(SRC, file))
     im = im.convert("RGBA") if im.mode in ("RGBA", "LA", "P") else im.convert("RGB")
+    if stem_name.startswith("art-") and im.mode == "RGBA":
+        im = im.crop(im.getchannel("A").point(lambda a: 255 if a > 8 else 0).getbbox())
     max_w = 1100 if stem_name == "fleur-packaging" else 1400
     if im.width > max_w:
         im = im.resize((max_w, round(im.height * max_w / im.width)), Image.LANCZOS)

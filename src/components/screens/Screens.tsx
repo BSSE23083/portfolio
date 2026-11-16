@@ -64,11 +64,11 @@ function WorkScreen() {
     <div className="pad mx-auto max-w-6xl">
       <div className="grid items-center gap-10 md:grid-cols-[1fr_1.15fr]">
         <div>
-          <p className="text-dim text-sm">user interface</p>
+          <p className="text-dim text-small">user interface</p>
           <h2 className="h-screen-title mt-1">Rishtay</h2>
           <Shot name="rishtay-logo" alt="Rishtay logo" className="mt-8 !w-36" />
           <div className="mt-8">
-            <p className="text-dim mb-3 text-xs">button states</p>
+            <p className="text-dim text-small mb-3">button states</p>
             <div className="flex flex-wrap items-center gap-3">
               <Shot name="rishtay-button-default" alt="Button, default state" className="!w-32" />
               <Shot name="rishtay-button-pressed" alt="Button, pressed state" className="!w-36" />
@@ -95,7 +95,7 @@ function GamesScreen() {
   return (
     <div className="pad grid min-h-full place-items-center text-center">
       <div>
-        <p className="text-dim text-sm">game design</p>
+        <p className="text-dim text-small">game design</p>
         <h2 className="h-screen-title mt-3">Currently working on it ;)</h2>
       </div>
     </div>
@@ -106,34 +106,38 @@ function GamesScreen() {
 
 function MixedMediaPage() {
   return (
-    <div className="paper-dark px-[5%] pb-24 pt-14">
-      <div className="mx-auto max-w-[60rem]">
-        {/* Title in red script with a scribbled underline */}
-        <div className="mx-auto w-[min(70%,26rem)]">
-          <h2>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/title-mixed-media.png" alt="Mixed Media" className="block w-full" />
-          </h2>
-          <svg viewBox="0 0 300 22" className="-mt-[4%] block w-full" aria-hidden fill="none" stroke="#b8402f" strokeWidth="1.3" strokeLinecap="round">
-            <path d="M12 9 C 80 3, 200 2, 290 7 C 200 8, 90 10, 20 15 C 100 11, 210 11, 284 13 C 190 15, 100 17, 40 19" />
-          </svg>
-        </div>
+    <div className="paper-dark pb-32 pt-16">
+      {/* Title in red script with a scribbled underline */}
+      <div className="mx-auto w-[min(72%,30rem)]">
+        <h2>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/title-mixed-media.png" alt="Mixed Media" className="block w-full" />
+        </h2>
+        <svg viewBox="0 0 300 22" className="-mt-[4%] block w-full" aria-hidden fill="none" stroke="#b8402f" strokeWidth="1.3" strokeLinecap="round">
+          <path d="M12 9 C 80 3, 200 2, 290 7 C 200 8, 90 10, 20 15 C 100 11, 210 11, 284 13 C 190 15, 100 17, 40 19" />
+        </svg>
+      </div>
 
-        {/* Pencil: text on the left, studies on the right */}
-        <div className="mt-12 grid items-center gap-8 md:grid-cols-[0.82fr_1fr]">
-          <p className="paper-text">
-            My pencil sketches are where I explore the fundamentals of light, shadow, and anatomy. It&apos;s my space for slow,
-            intentional observation mapping out the wireframes of the physical world before they ever transition into a
-            digital canvas.
-          </p>
+      {/* Pencil: text on the left; the studies sketchbook sits at the far right, half off the screen */}
+      <div className="mt-14 grid items-center gap-10 pl-[6%] md:grid-cols-[1fr_minmax(0,36%)]">
+        <p className="paper-text max-w-[36rem] pr-[6%] md:pr-0">
+          My pencil sketches are where I explore the fundamentals of light, shadow, and anatomy. It&apos;s my space for slow,
+          intentional observation mapping out the wireframes of the physical world before they ever transition into a digital
+          canvas.
+        </p>
+        {/* This image is cut on its right side, so it sits flush against the screen edge */}
+        <div className="ml-auto w-[70%] md:w-full">
           <Shot name="art-pencil-studies" alt="Sketchbook with pencil studies of a skull, an ear and an eye" />
         </div>
-        <div className="mt-6 w-full md:-mt-4 md:w-[56%]">
+      </div>
+
+      <div className="mx-auto max-w-[72rem] px-[6%]">
+        <div className="mt-10 w-full md:-mt-24 md:w-[50%]">
           <Shot name="art-pencil-portraits" alt="Sketchbook with pencil portraits" />
         </div>
 
         {/* Oil: a taped paper note beside the ocean painting, dragons below */}
-        <div className="mt-14 grid items-center gap-6 md:grid-cols-[1.25fr_1fr]">
+        <div className="mt-20 grid items-center gap-10 md:grid-cols-[1.2fr_1fr]">
           <div className="paper-note">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/images/texture-tape.webp" alt="" className="tape -right-[10%] -top-[4%] rotate-[14deg]" />
@@ -145,21 +149,21 @@ function MixedMediaPage() {
               engage with the organic complexity of color and rendering in its most physical, vibrant form.
             </p>
           </div>
-          <div className="mx-auto w-[62%] md:w-[68%]">
+          <div className="mx-auto w-[60%] md:w-[58%]">
             <Shot name="art-oil-ocean" alt="Oil painting of the ocean, taped to the page" />
           </div>
         </div>
-        <div className="mx-auto mt-8 w-full md:w-[64%]">
+        <div className="mx-auto mt-16 w-full md:w-[70%]">
           <Shot name="art-oil-dragons" alt="Oil paintings of dragons, taped to the page" />
         </div>
 
         {/* Pen: centered text, then the big notebook */}
-        <p className="paper-text mx-auto mt-14 max-w-[46rem] text-center">
+        <p className="paper-text mx-auto mt-20 max-w-[50rem] text-center">
           These are my pen sketches born at random moments, in the margins of notebooks or on the backs of receipts. Using pen
           and ink forces a certain level of confidence there is no undo button. I love the raw, unedited energy of capturing a
           face or a scene in a few rapid strokes, wherever inspiration happens to strike.
         </p>
-        <div className="mx-auto mt-8 w-full md:w-[86%]">
+        <div className="mx-auto mt-10 w-full md:w-[86%]">
           <Shot name="art-pen" alt="Sketchbook with pen sketches of hands, a car and a camera" />
         </div>
       </div>
@@ -197,7 +201,7 @@ const AI = "AI-generated furniture and interior visual";
 function GenAiScreen() {
   return (
     <div className="px-[5%] pb-20 pt-12">
-      <h2 className="text-center text-sm tracking-[0.2em] text-[#cfc8b8]">generative ai</h2>
+      <h2 className="text-small text-center tracking-[0.2em] text-[#cfc8b8]">generative ai</h2>
       <div className="mx-auto mt-10 max-w-[52rem]">
         <JustifiedRow images={[["genai-door-garden", AI]]} />
         <JustifiedRow images={[["genai-trolley-model", AI], ["genai-trolley", AI]]} />
@@ -220,15 +224,14 @@ const LOGOS: [ImageName, string][] = [
   ["logo-bonappetit", "Bonappetit logo"],
   ["logo-fleur", "Fleur logo"],
   ["logo-sunny-villa", "Sunny Villa logo"],
-  ["rishtay-logo", "Rishtay logo"],
 ];
 
 function LogofolioPage() {
   return (
     <div className="pad mx-auto max-w-5xl">
-      <p className="text-center text-sm tracking-[0.2em] text-[#8d877a]">design</p>
+      <p className="text-small text-center tracking-[0.2em] text-[#8d877a]">design</p>
       <h2 className="h-screen-title mt-2 text-center">Logofolio</h2>
-      <div className="logo-grid mt-10">
+      <div className="logo-grid mt-20">
         {LOGOS.map(([name, alt]) => (
           <div key={name} className="logo-cell">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -243,7 +246,7 @@ function LogofolioPage() {
 function PackagingPage() {
   return (
     <div className="pad">
-      <p className="text-center text-sm tracking-[0.2em] text-[#8d877a]">packaging</p>
+      <p className="text-small text-center tracking-[0.2em] text-[#8d877a]">packaging</p>
       <h2 className="h-screen-title mt-2 text-center">Fleur</h2>
       <div className="mx-auto mt-10 max-w-[46rem]">
         <Shot name="fleur-packaging" alt="Fleur packaging design: logo, patterns, boxes and mockups" />
@@ -270,7 +273,7 @@ function SocialPage() {
     <div>
       {/* ITU Media Club */}
       <div className="grid items-center gap-8 bg-[#e4e3c0] py-12 pl-[7%] text-[#2a2a22] md:grid-cols-[0.9fr_1.4fr]">
-        <p className="text-body max-w-[26rem] pr-[7%] md:pr-0">
+        <p className="text-body max-w-[30rem] pr-[7%] md:pr-0">
           As the Social Media Head at ITU <strong>Media Club</strong>, I architect the club&apos;s digital identity. I use
           Figma for structured layouts and Photoshop for high-fidelity asset manipulation, transforming campus events into
           cohesive, high-engagement visual campaigns.
@@ -285,7 +288,7 @@ function SocialPage() {
       {/* Gourmet Furnishers */}
       <Shot name="genai-arch-dining" alt="Dining table under an arch, made for Gourmet Furnishers" />
       <div className="bg-[linear-gradient(#7a3a24,#2c120b)] px-[8%] pb-20 pt-12 text-[#f1e9d8]">
-        <p className="text-body mx-auto max-w-[44rem] text-center">
+        <p className="text-body mx-auto max-w-[50rem] text-center">
           For <strong>Gourmet Furnishers</strong>, I developed social media content that translated their furniture collections
           into cohesive, visually engaging posts. Using Figma and Photoshop, I structured layouts, refined product visuals,
           and maintained a consistent visual direction across their social media presence.
@@ -315,7 +318,7 @@ export function AboutLeft() {
         </p>
       </Block>
       <Block title="Tools/Frameworks">
-        <p className="text-dim mb-1.5 text-xs">Design</p>
+        <p className="text-dim text-small mb-1.5">Design</p>
         <div className="flex flex-wrap gap-1.5">
           {ABOUT.tools.design.map((tool) => (
             <span key={tool} className="chip">
@@ -323,7 +326,7 @@ export function AboutLeft() {
             </span>
           ))}
         </div>
-        <p className="text-dim mb-1.5 mt-3 text-xs">Dev</p>
+        <p className="text-dim text-small mb-1.5 mt-3">Dev</p>
         <div className="flex flex-wrap gap-1.5">
           {ABOUT.tools.dev.map((tool) => (
             <span key={tool} className="chip">

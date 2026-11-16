@@ -47,6 +47,16 @@ export const BOUNCE = {
   duration: 0.6,
 };
 
+/** Side table with the two award shields (hover to see the competition; not clickable). */
+export const TROPHIES = {
+  position: [-0.22, 0, 2.05] as Vec3, // against the right wall, beside the rug
+  facing: -1.05, // radians: turned toward the camera
+  awards: [
+    { title: "1st position", event: "GDG Code Rush ITU 2026", color: "#e2b23c" },
+    { title: "2nd position", event: "SOFTEC UI/UX 2026", color: "#c3c8d2" },
+  ],
+};
+
 export const LAMP = {
   /** Position of the lamp shade (hangs from the ceiling above the desk). */
   position: [-0.86, 1.72, 0.5] as Vec3,

@@ -3,6 +3,15 @@
 Project brief and **all decisions agreed with Abdul** (2026-11-16). Read this fully before building.
 Where this file and the original brief disagree, this file wins.
 
+## Revision 5 (2026-11-16): overrides earlier revisions where they conflict
+
+- **One type scale for the whole site**, set in `globals.css`: `--fs-body` (all paragraphs and lists) and `--fs-small` (labels, captions). Use `.text-body` / `.text-small` / `.paper-text`; do not hard-code other text sizes.
+- **Cream windows have no visible scroll bar** (they still scroll).
+- **Mixed Media:** solid very dark grey background (`#141414`), no paper texture. The studies sketchbook image is cut on its right side in the source file, so it sits flush against the right screen edge. `prepare-assets.py` trims the transparent margins of all `art-*` images.
+- **Logofolio:** five white logos (no Rishtay logo), no grid lines, each in the same invisible box so they align.
+- **Trophies:** a side table against the right wall with two shields (`Trophies.tsx`, `TROPHIES` in `scene.config.ts`). They hop but are not clickable; hover shows the award.
+- **Dev server CSS lag:** after editing `globals.css`, Abdul's dev server serves the previous version until the file is saved once more. Save twice (append a newline) and confirm with `curl` before testing.
+
 ## Revision 4 (2026-11-16): overrides earlier revisions where they conflict
 
 - **Navbar shows only on the home (desk) view.** It slides away whenever an object is selected.

@@ -12,6 +12,11 @@
   --night: #0c0e17;
 
   /* Headings: Code 7x5 (pixel). Body: Consolas where installed, close fallbacks elsewhere. */
+  /* One type scale for the whole site. Change sizes here only. */
+  --fs-body: 1.0625rem; /* all paragraphs and lists */
+  --fs-small: 0.85rem; /* labels, captions, dates */
+  --lh-body: 1.65;
+
   --font-heading: var(--font-code7x5), "Courier New", monospace;
   --font-body: Consolas, "Cascadia Mono", "SF Mono", Menlo, "DejaVu Sans Mono", ui-monospace, monospace;
 }
@@ -106,6 +111,10 @@ body {
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 1.5rem;
+  scrollbar-width: none; /* no scroll bar on the cream windows (they still scroll) */
+}
+.window-body::-webkit-scrollbar {
+  display: none;
 }
 @media (min-width: 768px) {
   .window-body {
@@ -142,6 +151,9 @@ body {
 .fullscreen {
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #3a3a3a transparent;
   overscroll-behavior: contain;
   background: #0b0b0b;
   color: #e9e2d0;
@@ -213,8 +225,11 @@ body {
   margin: 0 0 0.7rem;
 }
 .text-body {
-  font-size: 0.92rem;
-  line-height: 1.6;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+}
+.text-small {
+  font-size: var(--fs-small);
 }
 .text-dim {
   opacity: 0.6;
@@ -222,7 +237,7 @@ body {
 .bullet-list li {
   position: relative;
   padding-left: 1.2rem;
-  font-size: 0.9rem;
+  font-size: var(--fs-body);
   line-height: 1.55;
 }
 .bullet-list li::before {
@@ -241,7 +256,7 @@ body {
 .timeline li {
   position: relative;
   margin-bottom: 1rem;
-  font-size: 0.9rem;
+  font-size: var(--fs-body);
   line-height: 1.45;
 }
 .timeline li::before {
@@ -258,7 +273,7 @@ body {
   border: 1.5px dashed var(--navy);
   border-radius: 6px;
   padding: 0.15rem 0.55rem;
-  font-size: 0.8rem;
+  font-size: var(--fs-small);
 }
 .slot {
   display: grid;
@@ -339,12 +354,12 @@ body {
 /* ---------- Mixed media: dark crumpled paper with red type, as in Figma ---------- */
 
 .paper-dark {
-  background: #2b2b2b url("/images/texture-paper-dark.webp") top center / 1000px;
+  background: #141414; /* solid, very dark grey */
   color: var(--paper-red);
 }
 .paper-text {
-  font-size: clamp(0.85rem, 1.25vw, 1.05rem);
-  line-height: 1.55;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
 }
 .paper-note {
   position: relative;
@@ -384,33 +399,26 @@ body {
 }
 
 .logo-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  border-top: 1px solid #2e2e2e;
-  border-left: 1px solid #2e2e2e;
-}
-@media (min-width: 768px) {
-  .logo-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4.5rem 0;
 }
 .logo-cell {
-  aspect-ratio: 4 / 3;
-  display: grid;
-  place-items: center;
-  border-right: 1px solid #2e2e2e;
-  border-bottom: 1px solid #2e2e2e;
-  padding: 16%;
-  transition: background 0.2s ease;
+  flex: 0 0 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.logo-cell:hover {
-  background: #1f1f1f;
+@media (min-width: 768px) {
+  .logo-cell {
+    flex-basis: 33.333%;
+  }
 }
+/* every logo sits in the same invisible box, centered, so they line up */
 .logo-cell img {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
+  width: 13rem;
+  height: 9rem;
   object-fit: contain;
 }
 

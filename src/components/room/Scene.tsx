@@ -18,6 +18,7 @@ import { Chair } from "./Chair";
 import { Character } from "./Character";
 import { Lamp } from "./Lamp";
 import { Interactive } from "./Interactive";
+import { Trophies } from "./Trophies";
 
 const damp = THREE.MathUtils.damp;
 
@@ -44,6 +45,7 @@ export function Scene({ lite = false }: { lite?: boolean }) {
 
       <Room theme={theme} />
       <Curtains />
+      <Trophies />
 
       <Desk>
         {/* On the riser, left to right */}
