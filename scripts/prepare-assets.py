@@ -134,6 +134,24 @@ ImageDraw.Draw(word).text((pad - box[0], pad - box[1]), text, font=font, fill=NA
 word.save("public/wordmark-portfolio.png")
 print("wordmark:", word.size)
 
+# "Mixed Media" title in the same script font, red like the Figma page
+RED = (224, 53, 43)
+title = "Mixed Media"
+box = font.getbbox(title)
+img = Image.new("RGBA", (box[2] - box[0] + pad * 2, box[3] - box[1] + pad * 2), RED + (0,))
+ImageDraw.Draw(img).text((pad - box[0], pad - box[1]), title, font=font, fill=RED + (255,))
+img.save("public/title-mixed-media.png")
+
+# width / height of every web image, so galleries can lay rows out without gaps
+import json
+sizes = {}
+for f in sorted(os.listdir(OUT)):
+    with Image.open(os.path.join(OUT, f)) as im:
+        sizes[os.path.splitext(f)[0]] = [im.width, im.height]
+os.makedirs("src/content", exist_ok=True)
+with open("src/content/image-sizes.json", "w") as fh:
+    json.dump(sizes, fh, indent=1)
+
 os.makedirs("src/fonts", exist_ok=True)
 shutil.copyfile("fonts/code_7x5/Code 7x5.ttf", "src/fonts/Code7x5.ttf")
 print("done")

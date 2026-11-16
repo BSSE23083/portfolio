@@ -65,8 +65,8 @@ export const CAMERA = {
   fov: 36,
   /** Low 3/4 view into the corner, matched to the sketch. */
   overview: {
-    position: [-3.85, 1.8, 3.85] as Vec3,
-    target: [-0.92, 0.78, 0.35] as Vec3,
+    position: [-4.5, 2.1, 3.2] as Vec3,
+    target: [-0.82, 0.78, 0.42] as Vec3,
   },
   /** How far the view turns with the mouse (subtle parallax, radians). */
   parallax: 0.035,

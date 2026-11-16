@@ -3,6 +3,20 @@
 Project brief and **all decisions agreed with Abdul** (2026-11-16). Read this fully before building.
 Where this file and the original brief disagree, this file wins.
 
+## Revision 3 (2026-11-16): overrides Revision 2 where they conflict
+
+- **Screens follow the Figma frames** (page "2025", section "New"). Frame node ids: Mixed Media `2030:507`, Social `2035:980`, Gen Ai `2151:333`, Desktop - 7 `2034:807`. Open one with `?node-id=2030-507`; set zoom to about 26% and drag the canvas to pan (scrolling barely moves it).
+  - Mixed Media: red script title with scribble, pencil text left + studies right, portraits, taped paper note + ocean painting, dragons, centered pen text, big pen notebook.
+  - Generative AI: dark, small "generative ai" title, rows of images at one shared height (full, pair, pair, pair, full, pair, pair, full).
+  - Social: full-width bands (Media Club text + laptop, phone mockup, team collage, arch dining image, Gourmet text + 3x3 posts on a brown gradient).
+- **Object mapping:** monitor = Rishtay; sketchbook = Mixed Media + Illustrations (2 pages); camera = Generative AI; books = Logofolio, Packaging, Social (3 separate pages, dark background, white PNG logos); VR headset = "Currently working on it ;)".
+- **No placeholders anywhere** except that VR line. Do not add placeholder text or boxes.
+- Multi-page screens use page buttons under the window title bar (`pages` in `Screens.tsx`).
+- Pop-up sits lower so there is clear space under the navbar (`.sheet` inset in globals.css).
+- Home text: left side, vertically just below the middle, tight line spacing. Overview camera sits further left and higher so the VR headset is visible.
+- Scroll tour goes through all seven objects, then returns to the desk.
+- Abdul wants good design judgment applied, not just literal instructions.
+
 ## Revision 2 (2026-11-16): these decisions override anything below that conflicts
 
 Abdul reviewed the first build and changed direction:
@@ -18,7 +32,6 @@ Abdul reviewed the first build and changed direction:
 - **Loading:** Abdul's logo fading in and out.
 - **Scroll** still steps the tour (monitor, VR headset, sketchbook, camera) but only moves the camera; a chip offers "open".
 - **Content:** Abdul's images are in `content/images-everythingelse/`. `python scripts/prepare-assets.py` converts them to `public/images/*.webp` and builds the logo and wordmark files. Object-to-screen mapping is in `src/config/objects.ts`.
-- **Still placeholders:** Rishtay description, SOFTEC and Code Rush case studies, all of Games (VR Podium), Photography and video, Gen AI blurb, LinkedIn.
 - Abdul runs his own `npm run dev` on port 3000; use that server for testing instead of starting another.
 
 ## Project overview

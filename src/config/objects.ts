@@ -8,7 +8,7 @@ type Vec3 = [number, number, number];
 export type ObjectId = "monitor" | "vr" | "sketchbook" | "camera" | "books" | "phone" | "character" | "lamp";
 
 /** The pop-up screens. "about" and "contact" have their own layouts. */
-export type ScreenId = "work" | "games" | "art" | "photo" | "brand" | "about" | "contact";
+export type ScreenId = "work" | "games" | "art" | "genai" | "brand" | "about" | "contact";
 
 export type RoomObject = {
   /** Name shown on hover. */
@@ -40,21 +40,21 @@ export const OBJECTS: Record<ObjectId, RoomObject> = {
   },
   sketchbook: {
     label: "Sketchbook",
-    section: "Mixed Media & Illustration",
+    section: "Mixed Media",
     screen: "art",
     file: "mixed-media.exe",
     camera: { position: [-1.14, 1.2, 1.02], target: [-0.97, 0.76, 0.66] },
   },
   camera: {
     label: "Camera",
-    section: "Photography & Video",
-    screen: "photo",
-    file: "photos.exe",
+    section: "Generative AI",
+    screen: "genai",
+    file: "generative-ai.exe",
     camera: { position: [-1.4, 0.98, 0.88], target: [-0.95, 0.8, 0.44] },
   },
   books: {
     label: "Books",
-    section: "Visual & Brand",
+    section: "Logos, Packaging & Social",
     screen: "brand",
     file: "brand.exe",
     camera: { position: [-0.36, 1.36, 0.88], target: [-0.14, 0.98, 0.27] },
@@ -80,5 +80,5 @@ export const OBJECTS: Record<ObjectId, RoomObject> = {
   },
 };
 
-/** Order of the scroll tour. */
-export const TOUR: ObjectId[] = ["monitor", "vr", "sketchbook", "camera"];
+/** Order of the scroll tour. After the last stop, scrolling on returns to the desk. */
+export const TOUR: ObjectId[] = ["monitor", "vr", "sketchbook", "camera", "books", "phone", "character"];

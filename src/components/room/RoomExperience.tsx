@@ -26,6 +26,7 @@ export default function RoomExperience() {
   const [screenOpen, setScreenOpen] = useState(false);
   const [shown, setShown] = useState<ObjectId | null>(null); // keeps a screen's content while it slides away
   const [showSketch, setShowSketch] = useState(false);
+  const [page, setPage] = useState(0); // which page of a multi-page screen (the books) is showing
   const screenOpenRef = useRef(false);
 
   const focus = useRoom((s) => s.focus);
@@ -48,6 +49,7 @@ export default function RoomExperience() {
     if (!focus) return;
     setTouched(true);
     setShown(focus);
+    setPage(0);
     if (focusSource !== "click" || !OBJECTS[focus].screen) return;
     const wait = (CAMERA.flyDuration + CAMERA.screenDelay) * 1000;
     const timer = setTimeout(() => setScreenOpen(true), wait);
@@ -63,8 +65,9 @@ export default function RoomExperience() {
     (direction: 1 | -1) => {
       const current = useRoom.getState().focus;
       const index = current ? TOUR.indexOf(current) + 1 : 0; // 0 = overview
-      const next = Math.min(TOUR.length, Math.max(0, index + direction));
-      if (next === index && current && TOUR.includes(current)) return;
+      let next = index + direction;
+      if (next > TOUR.length) next = 0; // past the last stop: back to the desk
+      if (next < 0) return; // already at the desk
       setFocus(next === 0 ? null : TOUR[next - 1], "scroll");
     },
     [setFocus],
@@ -111,6 +114,7 @@ export default function RoomExperience() {
   const close = () => setFocus(null);
   const shownInfo = shown ? OBJECTS[shown] : null;
   const shownScreen = shownInfo?.screen ? SCREENS[shownInfo.screen] : null;
+  const shownPage = shownScreen ? shownScreen.pages[Math.min(page, shownScreen.pages.length - 1)] : null;
   const isAbout = shown === "character";
   const isContact = shown === "phone";
   const touring = focus !== null && focusSource === "scroll";
@@ -143,9 +147,9 @@ export default function RoomExperience() {
       {/* Home text with a dark gradient behind it (overview only) */}
       <div className={`pointer-events-none absolute inset-0 transition-opacity duration-700 ${focus ? "opacity-0" : "opacity-100"}`}>
         <div className="absolute inset-0 bg-[linear-gradient(105deg,rgba(6,7,12,0.92)_0%,rgba(6,7,12,0.72)_26%,rgba(6,7,12,0)_58%)]" />
-        <div className="absolute left-6 top-[38%] -translate-y-1/2 md:left-16">
-          <h1 className="font-heading text-6xl leading-none text-[var(--cream)] md:text-8xl">Hello</h1>
-          <p className="mt-4 text-xl text-[var(--cream)] md:mt-6 md:text-3xl">I&apos;m Abdul Samad</p>
+        <div className="absolute left-6 top-[54%] -translate-y-1/2 md:left-16">
+          <h1 className="font-heading text-[clamp(3.25rem,6.6vw,6rem)] leading-none text-[var(--cream)]">Hello</h1>
+          <p className="mt-1 text-[clamp(1.1rem,2.1vw,1.9rem)] leading-tight text-[var(--cream)] md:mt-2">I&apos;m Abdul Samad</p>
         </div>
       </div>
 
@@ -202,8 +206,16 @@ export default function RoomExperience() {
 
       {/* Every other screen pops up from below (About too, on small screens) */}
       <div className={`sheet ${isAbout ? "lg:hidden" : ""} ${screenOpen && !isContact ? "is-open" : ""}`} role="dialog" aria-label={shownInfo?.section} aria-hidden={!screenOpen}>
-        <Window file={shownInfo?.file ?? ""} onClose={close} dark={shownScreen?.dark}>
-          {shownScreen && !isContact && shownScreen.render()}
+        <Window
+          file={shownInfo?.file ?? ""}
+          onClose={close}
+          flush
+          tone={shownPage?.tone}
+          tabs={shownScreen && shownScreen.pages.length > 1 ? shownScreen.pages.map((p) => p.label) : undefined}
+          activeTab={page}
+          onTab={setPage}
+        >
+          {shownPage && !isContact && shownPage.render()}
         </Window>
       </div>
 

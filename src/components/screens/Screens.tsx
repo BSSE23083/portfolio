@@ -1,26 +1,34 @@
 import type { ReactNode } from "react";
 import type { ScreenId } from "@/config/objects";
 import { ABOUT, CONTACT } from "@/content/about";
+import sizes from "@/content/image-sizes.json";
 
 /**
- * The content of each pop-up screen. Images live in public/images
- * (made from content/images-everythingelse by scripts/prepare-assets.py).
+ * The content of each pop-up screen, laid out like Abdul's Figma file.
+ * Images live in public/images (made from content/images-everythingelse by scripts/prepare-assets.py).
  */
 
-function Shot({ name, alt, className = "" }: { name: string; alt: string; className?: string }) {
+type ImageName = keyof typeof sizes;
+
+function Shot({ name, alt, className = "" }: { name: ImageName; alt: string; className?: string }) {
+  const [width, height] = sizes[name];
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src={`/images/${name}.webp`} alt={alt} loading="lazy" className={`shot ${className}`} />;
+  return <img src={`/images/${name}.webp`} alt={alt} width={width} height={height} loading="lazy" className={`block h-auto w-full ${className}`} />;
 }
 
-/** A clearly marked gap where content is still to come. */
-function Slot({ label, ratio = "16 / 9" }: { label: string; ratio?: string }) {
+/** Images side by side at one shared height, filling the width exactly (no ragged edges). */
+function JustifiedRow({ images }: { images: [ImageName, string][] }) {
   return (
-    <div className="slot" style={{ aspectRatio: ratio }}>
-      <span>
-        PLACEHOLDER
-        <br />
-        {label}
-      </span>
+    <div className="justified-row">
+      {images.map(([name, alt]) => {
+        const [width, height] = sizes[name];
+        return (
+          <div key={name} style={{ flex: width / height, aspectRatio: `${width} / ${height}` }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={`/images/${name}.webp`} alt={alt} loading="lazy" />
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -36,7 +44,7 @@ function Block({ title, children }: { title: string; children: ReactNode }) {
 
 /* ---------- Monitor: user interface ---------- */
 
-const RISHTAY_SCREENS = [
+const RISHTAY_SCREENS: [ImageName, string][] = [
   ["rishtay-signup", "Sign up"],
   ["rishtay-email", "Enter email"],
   ["rishtay-email-code", "Email code"],
@@ -53,40 +61,31 @@ const RISHTAY_SCREENS = [
 
 function WorkScreen() {
   return (
-    <>
-      <p className="text-dim text-sm">user interface</p>
-      <h2 className="h-screen-title mt-1">Rishtay</h2>
-      <div className="mt-6 grid items-center gap-8 md:grid-cols-[1fr_1.1fr]">
+    <div className="pad mx-auto max-w-6xl">
+      <div className="grid items-center gap-10 md:grid-cols-[1fr_1.15fr]">
         <div>
-          <Shot name="rishtay-logo" alt="Rishtay logo" className="!w-40" />
-          <p className="text-body mt-5">
-            [PLACEHOLDER: two or three sentences about Rishtay. What the app does, who it is for, and your role in designing
-            it.]
-          </p>
-          <div className="mt-5 flex flex-wrap items-center gap-3">
-            <Shot name="rishtay-button-default" alt="Button, default state" className="!w-32" />
-            <Shot name="rishtay-button-pressed" alt="Button, pressed state" className="!w-36" />
-            <Shot name="rishtay-button-disabled" alt="Button, disabled state" className="!w-36" />
+          <p className="text-dim text-sm">user interface</p>
+          <h2 className="h-screen-title mt-1">Rishtay</h2>
+          <Shot name="rishtay-logo" alt="Rishtay logo" className="mt-8 !w-36" />
+          <div className="mt-8">
+            <p className="text-dim mb-3 text-xs">button states</p>
+            <div className="flex flex-wrap items-center gap-3">
+              <Shot name="rishtay-button-default" alt="Button, default state" className="!w-32" />
+              <Shot name="rishtay-button-pressed" alt="Button, pressed state" className="!w-36" />
+              <Shot name="rishtay-button-disabled" alt="Button, disabled state" className="!w-36" />
+            </div>
           </div>
         </div>
         <Shot name="rishtay-mockup" alt="Rishtay app shown on a phone" />
       </div>
 
-      <Block title="Screens">
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-          {RISHTAY_SCREENS.map(([name, alt]) => (
-            <Shot key={name} name={name} alt={`Rishtay screen: ${alt}`} />
-          ))}
-        </div>
-      </Block>
-
-      <Block title="More case studies">
-        <div className="grid gap-4 md:grid-cols-2">
-          <Slot label="SOFTEC UI/UX 2026 entry (2nd position): cover image and write-up" />
-          <Slot label="GDG Code Rush ITU 2026 entry (1st position): cover image and write-up" />
-        </div>
-      </Block>
-    </>
+      <h3 className="h-section mt-14">Screens</h3>
+      <div className="grid grid-cols-2 gap-x-5 gap-y-8 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+        {RISHTAY_SCREENS.map(([name, alt]) => (
+          <Shot key={name} name={name} alt={`Rishtay screen: ${alt}`} />
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -94,28 +93,81 @@ function WorkScreen() {
 
 function GamesScreen() {
   return (
-    <>
-      <p className="text-dim text-sm">game design</p>
-      <h2 className="h-screen-title mt-1">VR Podium</h2>
-      <p className="text-body mt-4 max-w-3xl">
-        Final-year project. [PLACEHOLDER: what VR Podium is, who it is for, your role, the engine and the headset.]
-      </p>
-      <div className="mt-6">
-        <Slot label="VR Podium: hero screenshot or video" ratio="21 / 9" />
+    <div className="pad grid min-h-full place-items-center text-center">
+      <div>
+        <p className="text-dim text-sm">game design</p>
+        <h2 className="h-screen-title mt-3">Currently working on it ;)</h2>
       </div>
-      <Block title="More game work">
-        <div className="grid gap-4 md:grid-cols-2">
-          <Slot label="Game UI redesign: before and after" />
-          <Slot label="Level design breakdown: map and player flow" />
-        </div>
-      </Block>
-    </>
+    </div>
   );
 }
 
-/* ---------- Sketchbook: mixed media + illustrations ---------- */
+/* ---------- Sketchbook: mixed media (layout follows the Figma frame) ---------- */
 
-const ILLUSTRATIONS = [
+function MixedMediaPage() {
+  return (
+    <div className="paper-dark px-[5%] pb-24 pt-14">
+      <div className="mx-auto max-w-[60rem]">
+        {/* Title in red script with a scribbled underline */}
+        <div className="mx-auto w-[min(70%,26rem)]">
+          <h2>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/title-mixed-media.png" alt="Mixed Media" className="block w-full" />
+          </h2>
+          <svg viewBox="0 0 300 22" className="-mt-[4%] block w-full" aria-hidden fill="none" stroke="#b8402f" strokeWidth="1.3" strokeLinecap="round">
+            <path d="M12 9 C 80 3, 200 2, 290 7 C 200 8, 90 10, 20 15 C 100 11, 210 11, 284 13 C 190 15, 100 17, 40 19" />
+          </svg>
+        </div>
+
+        {/* Pencil: text on the left, studies on the right */}
+        <div className="mt-12 grid items-center gap-8 md:grid-cols-[0.82fr_1fr]">
+          <p className="paper-text">
+            My pencil sketches are where I explore the fundamentals of light, shadow, and anatomy. It&apos;s my space for slow,
+            intentional observation mapping out the wireframes of the physical world before they ever transition into a
+            digital canvas.
+          </p>
+          <Shot name="art-pencil-studies" alt="Sketchbook with pencil studies of a skull, an ear and an eye" />
+        </div>
+        <div className="mt-6 w-full md:-mt-4 md:w-[56%]">
+          <Shot name="art-pencil-portraits" alt="Sketchbook with pencil portraits" />
+        </div>
+
+        {/* Oil: a taped paper note beside the ocean painting, dragons below */}
+        <div className="mt-14 grid items-center gap-6 md:grid-cols-[1.25fr_1fr]">
+          <div className="paper-note">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/texture-tape.webp" alt="" className="tape -right-[10%] -top-[4%] rotate-[14deg]" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/texture-tape.webp" alt="" className="tape -bottom-[5%] -right-[8%] rotate-[24deg]" />
+            <p className="paper-text">
+              If sketching is the logic, oil painting is the atmosphere. I&apos;m drawn to the slow, meditative process of
+              layering pigments and building texture over time. It allows me to step away from the pixel-perfect world and
+              engage with the organic complexity of color and rendering in its most physical, vibrant form.
+            </p>
+          </div>
+          <div className="mx-auto w-[62%] md:w-[68%]">
+            <Shot name="art-oil-ocean" alt="Oil painting of the ocean, taped to the page" />
+          </div>
+        </div>
+        <div className="mx-auto mt-8 w-full md:w-[64%]">
+          <Shot name="art-oil-dragons" alt="Oil paintings of dragons, taped to the page" />
+        </div>
+
+        {/* Pen: centered text, then the big notebook */}
+        <p className="paper-text mx-auto mt-14 max-w-[46rem] text-center">
+          These are my pen sketches born at random moments, in the margins of notebooks or on the backs of receipts. Using pen
+          and ink forces a certain level of confidence there is no undo button. I love the raw, unedited energy of capturing a
+          face or a scene in a few rapid strokes, wherever inspiration happens to strike.
+        </p>
+        <div className="mx-auto mt-8 w-full md:w-[86%]">
+          <Shot name="art-pen" alt="Sketchbook with pen sketches of hands, a car and a camera" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const ILLUSTRATIONS: [ImageName, string][] = [
   ["illustration-venom", "Venom illustration"],
   ["illustration-mehran", "Mehran dashboard illustration"],
   ["illustration-civic", "Honda Civic illustration"],
@@ -124,170 +176,128 @@ const ILLUSTRATIONS = [
   ["illustration-danny-zee", "Danny Zee poster illustration"],
 ];
 
-function ArtScreen() {
+function IllustrationsPage() {
   return (
-    <>
-      <h2 className="h-screen-title">Mixed Media</h2>
-
-      <div className="mt-8 grid items-center gap-8 md:grid-cols-2">
-        <p className="text-body">
-          My pencil sketches are where I explore the fundamentals of light, shadow, and anatomy. It&apos;s my space for slow,
-          intentional observation mapping out the wireframes of the physical world before they ever transition into a digital
-          canvas.
-        </p>
-        <div className="grid grid-cols-2 items-center gap-4">
-          <Shot name="art-pencil-portraits" alt="Sketchbook with pencil portraits" />
-          <Shot name="art-pencil-studies" alt="Sketchbook with pencil studies of a skull, an ear and an eye" />
-        </div>
-      </div>
-
-      <div className="mt-12 grid items-center gap-8 md:grid-cols-2">
-        <Shot name="art-pen" alt="Sketchbook with pen sketches of hands, a car and a camera" className="md:order-none" />
-        <p className="text-body">
-          These are my pen sketches born at random moments, in the margins of notebooks or on the backs of receipts. Using pen
-          and ink forces a certain level of confidence there is no undo button. I love the raw, unedited energy of capturing a
-          face or a scene in a few rapid strokes, wherever inspiration happens to strike.
-        </p>
-      </div>
-
-      <div className="mt-12 grid items-center gap-8 md:grid-cols-2">
-        <p className="text-body">
-          If sketching is the logic, oil painting is the atmosphere. I&apos;m drawn to the slow, meditative process of layering
-          pigments and building texture over time. It allows me to step away from the pixel-perfect world and engage with the
-          organic complexity of color and rendering in its most physical, vibrant form.
-        </p>
-        <div className="grid grid-cols-[1.6fr_1fr] items-center gap-4">
-          <Shot name="art-oil-dragons" alt="Oil paintings of dragons, taped to the page" />
-          <Shot name="art-oil-ocean" alt="Oil painting of the ocean, taped to the page" />
-        </div>
-      </div>
-
-      <Block title="Illustrations">
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-          {ILLUSTRATIONS.map(([name, alt]) => (
-            <Shot key={name} name={name} alt={alt} />
-          ))}
-        </div>
-      </Block>
-    </>
-  );
-}
-
-/* ---------- Camera: photography ---------- */
-
-function PhotoScreen() {
-  return (
-    <>
-      <p className="text-dim text-sm">photography &amp; video</p>
-      <h2 className="h-screen-title mt-1">Photos</h2>
-      <p className="text-body mt-4 max-w-3xl">[PLACEHOLDER: one or two lines about what you like to shoot and your camera.]</p>
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {[1, 2, 3, 4, 5, 6].map((n) => (
-          <Slot key={n} label={`Photograph ${n}`} ratio="3 / 2" />
+    <div className="pad mx-auto max-w-5xl">
+      <h2 className="h-screen-title text-center">Illustrations</h2>
+      <div className="mt-10 grid grid-cols-2 gap-5 md:grid-cols-3">
+        {ILLUSTRATIONS.map(([name, alt]) => (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img key={name} src={`/images/${name}.webp`} alt={alt} loading="lazy" className="block aspect-[3/4] w-full object-cover" />
         ))}
       </div>
-      <Block title="Video reel">
-        <Slot label="Video reel: send a YouTube or Vimeo link" />
-      </Block>
-    </>
+    </div>
   );
 }
 
-/* ---------- Books: logos, packaging, social, generative AI ---------- */
+/* ---------- Camera: generative AI (rows as in the Figma frame) ---------- */
 
-const LOGOS = [
+const AI = "AI-generated furniture and interior visual";
+
+function GenAiScreen() {
+  return (
+    <div className="px-[5%] pb-20 pt-12">
+      <h2 className="text-center text-sm tracking-[0.2em] text-[#cfc8b8]">generative ai</h2>
+      <div className="mx-auto mt-10 max-w-[52rem]">
+        <JustifiedRow images={[["genai-door-garden", AI]]} />
+        <JustifiedRow images={[["genai-trolley-model", AI], ["genai-trolley", AI]]} />
+        <JustifiedRow images={[["genai-doors", AI], ["genai-living-room", AI]]} />
+        <JustifiedRow images={[["genai-library", AI], ["genai-desk", AI]]} />
+        <JustifiedRow images={[["genai-cove-1", AI]]} />
+        <JustifiedRow images={[["genai-cove-2", AI], ["genai-maison-bed", AI]]} />
+        <JustifiedRow images={[["genai-round-tables", AI], ["genai-axis-table", AI]]} />
+        <JustifiedRow images={[["genai-arch-dining", AI]]} />
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Books: three separate pages ---------- */
+
+const LOGOS: [ImageName, string][] = [
   ["logo-abdul", "Abdul's personal logo"],
   ["logo-slice", "Slice logo"],
   ["logo-bonappetit", "Bonappetit logo"],
   ["logo-fleur", "Fleur logo"],
   ["logo-sunny-villa", "Sunny Villa logo"],
-];
-const GOURMET = [
-  ["gourmet-claudia-chair", "Claudia chair"],
-  ["gourmet-luna-chair", "Luna chair"],
-  ["gourmet-nexa-chair", "Nexa chair"],
-  ["gourmet-cove-dining", "Cove dining"],
-  ["gourmet-claudia-bed", "Claudia bed set"],
-  ["gourmet-aura", "Aura dining table"],
-  ["gourmet-axis", "Axis center table set"],
-  ["gourmet-doors", "Doors"],
-  ["gourmet-14-august", "14 August, Independence Day"],
-];
-const GEN_AI = [
-  "genai-cove-1",
-  "genai-living-room",
-  "genai-library",
-  "genai-maison-bed",
-  "genai-arch-dining",
-  "genai-axis-table",
-  "genai-door-garden",
-  "genai-doors",
-  "genai-round-tables",
-  "genai-desk",
-  "genai-trolley",
-  "genai-cove-2",
-  "genai-trolley-model",
+  ["rishtay-logo", "Rishtay logo"],
 ];
 
-function BrandScreen() {
+function LogofolioPage() {
   return (
-    <>
-      <p className="text-dim text-sm">design</p>
-      <h2 className="h-screen-title mt-1">Logofolio</h2>
-      <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+    <div className="pad mx-auto max-w-5xl">
+      <p className="text-center text-sm tracking-[0.2em] text-[#8d877a]">design</p>
+      <h2 className="h-screen-title mt-2 text-center">Logofolio</h2>
+      <div className="logo-grid mt-10">
         {LOGOS.map(([name, alt]) => (
-          <div key={name} className="grid aspect-square place-items-center rounded-xl bg-[var(--navy)] p-6">
-            <Shot name={name} alt={alt} className="!w-auto max-h-full max-w-full !rounded-none" />
+          <div key={name} className="logo-cell">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={`/images/${name}.webp`} alt={alt} loading="lazy" />
           </div>
         ))}
       </div>
+    </div>
+  );
+}
 
-      <Block title="Packaging: Fleur">
-        <div className="mx-auto max-w-2xl">
-          <Shot name="fleur-packaging" alt="Fleur packaging design: logo, patterns, boxes and mockups" className="frame" />
-        </div>
-      </Block>
+function PackagingPage() {
+  return (
+    <div className="pad">
+      <p className="text-center text-sm tracking-[0.2em] text-[#8d877a]">packaging</p>
+      <h2 className="h-screen-title mt-2 text-center">Fleur</h2>
+      <div className="mx-auto mt-10 max-w-[46rem]">
+        <Shot name="fleur-packaging" alt="Fleur packaging design: logo, patterns, boxes and mockups" />
+      </div>
+    </div>
+  );
+}
 
-      <Block title="Social: Gourmet Furnishers">
-        <p className="text-body mb-5 max-w-3xl">
-          For Gourmet Furnishers, I developed social media content that translated their furniture collections into cohesive,
-          visually engaging posts. Using Figma and Photoshop, I structured layouts, refined product visuals, and maintained a
-          consistent visual direction across their social media presence.
+const GOURMET: [ImageName, string][] = [
+  ["gourmet-claudia-bed", "Claudia bed set"],
+  ["gourmet-axis", "Axis center table set"],
+  ["gourmet-aura", "Aura dining table"],
+  ["gourmet-claudia-chair", "Claudia chair"],
+  ["gourmet-luna-chair", "Luna chair"],
+  ["gourmet-cove-dining", "Cove dining"],
+  ["gourmet-14-august", "14 August, Independence Day"],
+  ["gourmet-doors", "Doors"],
+  ["gourmet-nexa-chair", "Nexa chair"],
+];
+
+/** Social: full-width bands, in the same order as the Figma frame. */
+function SocialPage() {
+  return (
+    <div>
+      {/* ITU Media Club */}
+      <div className="grid items-center gap-8 bg-[#e4e3c0] py-12 pl-[7%] text-[#2a2a22] md:grid-cols-[0.9fr_1.4fr]">
+        <p className="text-body max-w-[26rem] pr-[7%] md:pr-0">
+          As the Social Media Head at ITU <strong>Media Club</strong>, I architect the club&apos;s digital identity. I use
+          Figma for structured layouts and Photoshop for high-fidelity asset manipulation, transforming campus events into
+          cohesive, high-engagement visual campaigns.
         </p>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+        <Shot name="imc-laptop" alt="ITU Media Club design file open on a laptop" />
+      </div>
+      <Shot name="imc-mockup" alt="ITU Media Club posts shown on a phone" />
+      <div className="bg-[linear-gradient(#e4e3c0,#b3a78a)] px-[10%] py-16">
+        <Shot name="imc-team" alt="ITU Media Club team and event covers" />
+      </div>
+
+      {/* Gourmet Furnishers */}
+      <Shot name="genai-arch-dining" alt="Dining table under an arch, made for Gourmet Furnishers" />
+      <div className="bg-[linear-gradient(#7a3a24,#2c120b)] px-[8%] pb-20 pt-12 text-[#f1e9d8]">
+        <p className="text-body mx-auto max-w-[44rem] text-center">
+          For <strong>Gourmet Furnishers</strong>, I developed social media content that translated their furniture collections
+          into cohesive, visually engaging posts. Using Figma and Photoshop, I structured layouts, refined product visuals,
+          and maintained a consistent visual direction across their social media presence.
+        </p>
+        <div className="mx-auto mt-12 grid max-w-[48rem] grid-cols-3 gap-3 md:gap-6">
           {GOURMET.map(([name, alt]) => (
-            <Shot key={name} name={name} alt={`Gourmet Furnishers social post: ${alt}`} />
+            // eslint-disable-next-line @next/next/no-img-element
+            <img key={name} src={`/images/${name}.webp`} alt={`Gourmet Furnishers social post: ${alt}`} loading="lazy" className="block aspect-[4/5] w-full object-cover" />
           ))}
         </div>
-      </Block>
-
-      <Block title="Social: ITU Media Club">
-        <p className="text-body mb-5 max-w-3xl">
-          As the Social Media Head at ITU Media Club, I architect the club&apos;s digital identity. I use Figma for structured
-          layouts and Photoshop for high-fidelity asset manipulation, transforming campus events into cohesive, high-engagement
-          visual campaigns.
-        </p>
-        <div className="grid items-center gap-4 md:grid-cols-[1.3fr_1fr]">
-          <div className="grid gap-4">
-            <Shot name="imc-mockup" alt="ITU Media Club posts shown on a phone" />
-            <Shot name="imc-team" alt="ITU Media Club team and event covers" />
-          </div>
-          <Shot name="imc-laptop" alt="ITU Media Club design file open on a laptop" />
-        </div>
-      </Block>
-
-      <Block title="Generative AI">
-        <p className="text-body mb-5 max-w-3xl">
-          Product and interior visuals made with generative AI. [PLACEHOLDER: one or two lines on how you use AI in your
-          workflow and which tools.]
-        </p>
-        <div className="columns-2 gap-4 md:columns-3 [&>*]:mb-4">
-          {GEN_AI.map((name) => (
-            <Shot key={name} name={name} alt="AI-generated furniture and interior visual" />
-          ))}
-        </div>
-      </Block>
-    </>
+      </div>
+    </div>
   );
 }
 
@@ -391,28 +401,51 @@ export function ContactList() {
   );
 }
 
-/** Picks the content for a screen. `dark` screens use the crumpled-paper look. */
-export const SCREENS: Record<ScreenId, { dark?: boolean; render: () => ReactNode }> = {
-  work: { render: () => <WorkScreen /> },
-  games: { render: () => <GamesScreen /> },
-  art: { dark: true, render: () => <ArtScreen /> },
-  photo: { render: () => <PhotoScreen /> },
-  brand: { render: () => <BrandScreen /> },
+/** One page of a screen. A screen with several pages shows page buttons under the title bar. */
+type Page = { label: string; tone?: "cream" | "dark"; render: () => ReactNode };
+
+export const SCREENS: Record<ScreenId, { pages: Page[] }> = {
+  work: { pages: [{ label: "Rishtay", render: () => <WorkScreen /> }] },
+  games: { pages: [{ label: "Games", render: () => <GamesScreen /> }] },
+  art: {
+    pages: [
+      { label: "mixed media", tone: "dark", render: () => <MixedMediaPage /> },
+      { label: "illustrations", tone: "dark", render: () => <IllustrationsPage /> },
+    ],
+  },
+  genai: { pages: [{ label: "Generative AI", tone: "dark", render: () => <GenAiScreen /> }] },
+  brand: {
+    pages: [
+      { label: "logofolio", tone: "dark", render: () => <LogofolioPage /> },
+      { label: "packaging", tone: "dark", render: () => <PackagingPage /> },
+      { label: "social", tone: "dark", render: () => <SocialPage /> },
+    ],
+  },
   about: {
-    render: () => (
-      <>
-        <h2 className="h-screen-title mb-5">{ABOUT.heading}</h2>
-        <AboutLeft />
-        <AboutRight />
-      </>
-    ),
+    pages: [
+      {
+        label: "About",
+        render: () => (
+          <div className="pad">
+            <h2 className="h-screen-title mb-5">{ABOUT.heading}</h2>
+            <AboutLeft />
+            <AboutRight />
+          </div>
+        ),
+      },
+    ],
   },
   contact: {
-    render: () => (
-      <>
-        <h2 className="h-screen-title mb-4">Contact</h2>
-        <ContactList />
-      </>
-    ),
+    pages: [
+      {
+        label: "Contact",
+        render: () => (
+          <div className="pad">
+            <h2 className="h-screen-title mb-4">Contact</h2>
+            <ContactList />
+          </div>
+        ),
+      },
+    ],
   },
 };

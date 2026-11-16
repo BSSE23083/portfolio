@@ -1,0 +1,246 @@
+{
+ "art-oil-dragons": [
+  1400,
+  1189
+ ],
+ "art-oil-ocean": [
+  825,
+  1389
+ ],
+ "art-pen": [
+  1400,
+  1556
+ ],
+ "art-pencil-portraits": [
+  1400,
+  1092
+ ],
+ "art-pencil-studies": [
+  946,
+  1097
+ ],
+ "fleur-packaging": [
+  1100,
+  5418
+ ],
+ "genai-arch-dining": [
+  1153,
+  644
+ ],
+ "genai-axis-table": [
+  672,
+  458
+ ],
+ "genai-cove-1": [
+  1147,
+  875
+ ],
+ "genai-cove-2": [
+  419,
+  621
+ ],
+ "genai-desk": [
+  436,
+  564
+ ],
+ "genai-door-garden": [
+  1141,
+  832
+ ],
+ "genai-doors": [
+  585,
+  455
+ ],
+ "genai-library": [
+  698,
+  564
+ ],
+ "genai-living-room": [
+  549,
+  455
+ ],
+ "genai-maison-bed": [
+  716,
+  621
+ ],
+ "genai-round-tables": [
+  459,
+  458
+ ],
+ "genai-trolley-model": [
+  426,
+  709
+ ],
+ "genai-trolley": [
+  709,
+  709
+ ],
+ "gourmet-14-august": [
+  370,
+  462
+ ],
+ "gourmet-aura": [
+  370,
+  463
+ ],
+ "gourmet-axis": [
+  370,
+  463
+ ],
+ "gourmet-claudia-bed": [
+  370,
+  463
+ ],
+ "gourmet-claudia-chair": [
+  370,
+  463
+ ],
+ "gourmet-cove-dining": [
+  370,
+  463
+ ],
+ "gourmet-doors": [
+  370,
+  463
+ ],
+ "gourmet-luna-chair": [
+  370,
+  463
+ ],
+ "gourmet-nexa-chair": [
+  372,
+  464
+ ],
+ "illustration-civic": [
+  366,
+  486
+ ],
+ "illustration-danny-zee": [
+  392,
+  490
+ ],
+ "illustration-mehran": [
+  395,
+  486
+ ],
+ "illustration-portrait": [
+  347,
+  486
+ ],
+ "illustration-r34": [
+  345,
+  486
+ ],
+ "illustration-venom": [
+  389,
+  485
+ ],
+ "imc-laptop": [
+  1241,
+  1600
+ ],
+ "imc-mockup": [
+  1400,
+  759
+ ],
+ "imc-team": [
+  1193,
+  756
+ ],
+ "logo-abdul": [
+  176,
+  198
+ ],
+ "logo-bonappetit": [
+  186,
+  198
+ ],
+ "logo-fleur": [
+  270,
+  91
+ ],
+ "logo-slice": [
+  98,
+  198
+ ],
+ "logo-sunny-villa": [
+  216,
+  121
+ ],
+ "rishtay-about-you": [
+  268,
+  492
+ ],
+ "rishtay-button-default": [
+  152,
+  47
+ ],
+ "rishtay-button-disabled": [
+  172,
+  67
+ ],
+ "rishtay-button-pressed": [
+  172,
+  67
+ ],
+ "rishtay-email-code": [
+  288,
+  512
+ ],
+ "rishtay-email": [
+  288,
+  512
+ ],
+ "rishtay-home": [
+  288,
+  512
+ ],
+ "rishtay-interests": [
+  288,
+  512
+ ],
+ "rishtay-logo": [
+  161,
+  101
+ ],
+ "rishtay-mockup": [
+  1024,
+  683
+ ],
+ "rishtay-photo-empty": [
+  288,
+  512
+ ],
+ "rishtay-photo": [
+  288,
+  512
+ ],
+ "rishtay-privacy": [
+  268,
+  492
+ ],
+ "rishtay-profile": [
+  268,
+  492
+ ],
+ "rishtay-ready": [
+  268,
+  492
+ ],
+ "rishtay-signup": [
+  288,
+  512
+ ],
+ "rishtay-welcome": [
+  288,
+  512
+ ],
+ "texture-paper": [
+  975,
+  971
+ ],
+ "texture-tape": [
+  538,
+  303
+ ]
+}
