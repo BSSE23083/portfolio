@@ -27,6 +27,7 @@ export default function RoomExperience() {
   const [shown, setShown] = useState<ObjectId | null>(null); // keeps a screen's content while it slides away
   const [showSketch, setShowSketch] = useState(false);
   const [paused, setPaused] = useState(false);
+  const [still, setStill] = useState(false); // true when the device cannot run the 3D room
   const [page, setPage] = useState(0); // which page of a multi-page screen (the books) is showing
   const screenOpenRef = useRef(false);
 
@@ -39,7 +40,14 @@ export default function RoomExperience() {
 
   // Lighter rendering on phones and touch devices. ?quality=low or ?quality=high forces it.
   useEffect(() => {
-    const param = new URLSearchParams(window.location.search).get("quality");
+    const query = new URLSearchParams(window.location.search);
+    // No WebGL (or ?still=1 to preview): show a still picture of the room instead. Every screen still opens.
+    const probe = document.createElement("canvas");
+    if (query.has("still") || !(probe.getContext("webgl2") || probe.getContext("webgl"))) {
+      setStill(true);
+      setReady(true);
+    }
+    const param = query.get("quality");
     if (param) setLite(param === "low");
     else setLite(window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768);
   }, []);
@@ -110,6 +118,10 @@ export default function RoomExperience() {
       if (process.env.NODE_ENV === "development" && e.key.toLowerCase() === "s" && !e.ctrlKey && !e.metaKey) {
         setShowSketch((v) => !v);
       }
+      // Development only: "P" saves the current view as public/room-still.jpg (the fallback picture).
+      if (process.env.NODE_ENV === "development" && e.key.toLowerCase() === "p" && !e.ctrlKey && !e.metaKey) {
+        window.dispatchEvent(new Event("capture-still")); // handled by <DevStillCapture /> in Scene.tsx
+      }
     };
     window.addEventListener("wheel", onWheel, { passive: true });
     window.addEventListener("touchstart", onTouchStart, { passive: true });
@@ -134,6 +146,10 @@ export default function RoomExperience() {
 
   return (
     <div className="fixed inset-0 overflow-hidden">
+      {still ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src="/room-still.jpg" alt="Abdul at his desk under a warm lamp" className="absolute inset-0 h-full w-full object-cover object-[62%_center]" />
+      ) : (
       <Canvas
         shadows
         dpr={lite ? [1, 1.25] : [1, 1.5]}
@@ -152,6 +168,7 @@ export default function RoomExperience() {
           <Scene lite={lite} />
         </Suspense>
       </Canvas>
+      )}
 
       {showSketch && (
         // eslint-disable-next-line @next/next/no-img-element
@@ -160,8 +177,9 @@ export default function RoomExperience() {
 
       {/* Home text with a dark gradient behind it (overview only) */}
       <div className={`pointer-events-none absolute inset-0 transition-opacity duration-700 ${focus ? "opacity-0" : "opacity-100"}`}>
-        <div className="absolute inset-0 bg-[linear-gradient(105deg,rgba(6,7,12,0.92)_0%,rgba(6,7,12,0.72)_26%,rgba(6,7,12,0)_58%)]" />
-        <div className="absolute left-6 top-[54%] -translate-y-1/2 md:left-16">
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,7,12,0.92)_0%,rgba(6,7,12,0.7)_26%,rgba(6,7,12,0)_46%)] md:bg-[linear-gradient(105deg,rgba(6,7,12,0.92)_0%,rgba(6,7,12,0.72)_26%,rgba(6,7,12,0)_58%)]" />
+        {/* Phones: in the clear space above the desk. Wide screens: left, just below the middle. */}
+        <div className="absolute left-6 top-[21%] -translate-y-1/2 md:left-16 md:top-[54%]">
           <h1 className="font-heading text-[clamp(3.25rem,6.6vw,6rem)] leading-none text-[var(--cream)]">Hello</h1>
           <p className="mt-1 text-[clamp(1.1rem,2.1vw,1.9rem)] leading-tight text-[var(--cream)] md:mt-2">I&apos;m Abdul Samad</p>
         </div>
@@ -178,7 +196,10 @@ export default function RoomExperience() {
 
       {/* First-load hint */}
       <div className={`pointer-events-none absolute inset-x-0 bottom-24 flex justify-center transition-opacity duration-700 md:bottom-8 ${focus || touched || !ready ? "opacity-0" : "opacity-100"}`}>
-        <p className="room-chip">Click around my desk to explore · scroll for a tour</p>
+        <p className="room-chip">
+          <span className="hidden md:inline">Click around my desk to explore · scroll for a tour</span>
+          <span className="md:hidden">Tap around my desk · swipe for a tour</span>
+        </p>
       </div>
 
       {/* While touring by scroll: name of the stop and a button to open its screen */}

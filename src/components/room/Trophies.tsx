@@ -14,6 +14,13 @@ import { Box } from "./primitives";
  */
 export function Trophies() {
   const [hovered, setHovered] = useState<number | null>(null);
+  const [tapped, setTapped] = useState<number | null>(null); // phones have no hover: a tap shows the label for a few seconds
+  const tapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const showLabel = (i: number) => {
+    setTapped(i);
+    if (tapTimer.current) clearTimeout(tapTimer.current);
+    tapTimer.current = setTimeout(() => setTapped(null), 3500);
+  };
   const shields = useRef<(THREE.Group | null)[]>([]);
 
   // Shield outline, extruded into a thin plaque.
@@ -59,12 +66,16 @@ export function Trophies() {
           }}
           position={[-0.02, TABLE_TOP, i === 0 ? -0.11 : 0.11]}
           rotation={[0, TROPHIES.facing, 0]}
-          scale={hovered === i ? 1.12 : 1}
+          scale={hovered === i || tapped === i ? 1.12 : 1}
           onPointerOver={(e) => {
             e.stopPropagation();
             setHovered(i);
           }}
           onPointerOut={() => setHovered((current) => (current === i ? null : current))}
+          onClick={(e) => {
+            e.stopPropagation();
+            showLabel(i);
+          }}
         >
           <mesh position={[0, 0.12, 0]} visible={false}>
             <boxGeometry args={[0.16, 0.26, 0.1]} />
@@ -81,7 +92,7 @@ export function Trophies() {
           </mesh>
           <Box size={[0.03, 0.03, 0.006]} position={[0, 0.142, 0.014]} rotation={[-0.12, 0, Math.PI / 4]} color={award.color} emissive={award.color} emissiveIntensity={0.3} castShadow={false} />
 
-          {hovered === i && (
+          {(hovered === i || tapped === i) && (
             <Html position={[0, 0.3, 0]} center zIndexRange={[30, 0]} style={{ pointerEvents: "none" }}>
               <div className="room-label">
                 <strong>{award.title}</strong>

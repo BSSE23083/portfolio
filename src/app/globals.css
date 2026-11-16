@@ -541,3 +541,51 @@ button.room-chip {
   }
 }
 
+/* ---------- Phones ---------- */
+@media (max-width: 767px) {
+  :root {
+    --fs-body: 1rem;
+    --fs-feature: 1.0625rem;
+  }
+  .sheet {
+    inset: 1rem 0.5rem 0;
+  }
+  .window-bar {
+    padding: 0.55rem 0.8rem;
+  }
+  .window-dot {
+    width: 0.85rem;
+    height: 0.85rem; /* easier to tap */
+  }
+  /* page buttons: one row that scrolls sideways if it has to, never covering much */
+  .float-pages {
+    bottom: 0.9rem;
+    max-width: calc(100% - 1.25rem);
+    overflow-x: auto;
+    gap: 0.45rem;
+    padding: 0.45rem 0.55rem 0.65rem;
+  }
+  .float-button {
+    font-size: 0.68rem;
+    padding: 0.4rem 0.85rem 0.35rem;
+    white-space: nowrap;
+  }
+  .float-back {
+    left: 0.9rem;
+    top: 0.9rem;
+  }
+  /* the paper note grows with its text instead of staying square */
+  .paper-note {
+    aspect-ratio: auto;
+    padding: 18% 12%;
+  }
+  .logo-grid {
+    gap: 3rem 0;
+  }
+  .logo-cell img {
+    width: 8.5rem;
+    height: 6rem;
+  }
+}
+
+

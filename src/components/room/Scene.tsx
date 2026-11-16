@@ -36,12 +36,13 @@ export function Scene({ lite = false }: { lite?: boolean }) {
     <Selection>
       <color attach="background" args={[lights.background]} />
       <CameraRig />
+      {process.env.NODE_ENV === "development" && <DevStillCapture />}
 
       {/* Lighting: cool, dim fill from the window side; the lamp adds the warm pool */}
       <ambientLight color={lights.ambient.color} intensity={lights.ambient.intensity} />
       <directionalLight color={lights.moon.color} intensity={lights.moon.intensity} position={lights.moon.position} />
       <directionalLight color={lights.fill.color} intensity={lights.fill.intensity} position={lights.fill.position} />
-      <Lamp theme={theme} onPull={toggleTheme} />
+      <Lamp theme={theme} onPull={toggleTheme} lite={lite} />
 
       <Room theme={theme} />
       <Curtains />
@@ -89,6 +90,29 @@ export function Scene({ lite = false }: { lite?: boolean }) {
       </EffectComposer>
     </Selection>
   );
+}
+
+/**
+ * Development only: when "P" is pressed, saves the frame that was just drawn as public/room-still.jpg.
+ * It runs after the effects have rendered (priority 2), while the picture is still in the canvas.
+ */
+function DevStillCapture() {
+  const gl = useThree((state) => state.gl);
+  const wanted = useRef(false);
+  useEffect(() => {
+    const request = () => (wanted.current = true);
+    window.addEventListener("capture-still", request);
+    return () => window.removeEventListener("capture-still", request);
+  }, []);
+  useFrame(() => {
+    if (!wanted.current) return;
+    wanted.current = false;
+    const dataUrl = gl.domElement.toDataURL("image/jpeg", 0.86);
+    fetch("/api/dev-still", { method: "POST", body: JSON.stringify({ dataUrl }) })
+      .then((r) => r.text())
+      .then((text) => console.info("room still saved", text));
+  }, 2);
+  return null;
 }
 
 /** Chair + character. When selected, the chair swivels toward the camera and he waves. */

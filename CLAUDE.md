@@ -3,6 +3,15 @@
 Project brief and **all decisions agreed with Abdul** (2026-11-16). Read this fully before building.
 Where this file and the original brief disagree, this file wins.
 
+## Revision 8 (2026-11-16): phones
+
+- **Phone layout** lives in one `@media (max-width: 767px)` block at the end of `globals.css` (smaller type scale, tighter sheet inset, compact floating page buttons, paper note grows with its text, smaller logos).
+- **Home on phones:** "Hello" block sits above the desk (top 21%) with a top-down gradient; hint reads "Tap around my desk · swipe for a tour".
+- **Trophies:** tapping a shield shows its label for 3.5s (phones have no hover). Still not a link.
+- **Lite mode** (phones) also halves the lamp shadow map.
+- **Still-image fallback:** when WebGL is unavailable (or with `?still=1`), `public/room-still.jpg` replaces the canvas; every screen still opens from the Explore buttons and navbar. To refresh the picture after changing the room: run the dev server, open the home page at desktop size and press **P** (`DevStillCapture` in `Scene.tsx` posts to `/api/dev-still`, which only works in development).
+- Not yet tested on a real phone; frame rate on phones is unmeasured.
+
 ## Revision 7 (2026-11-16)
 
 - Screen pop-up delay is 0.5s (`CAMERA.screenDelay`).

@@ -11,7 +11,8 @@ import { Interactive } from "./Interactive";
  * Pendant lamp hanging from the ceiling. Its warm light pooled on the desk is the focus of the scene.
  * Clicking the pull cord calls `onPull` (light/dark toggle).
  */
-export function Lamp({ theme, onPull }: { theme: ThemeName; onPull?: () => void }) {
+export function Lamp({ theme, onPull, lite = false }: { theme: ThemeName; onPull?: () => void; lite?: boolean }) {
+  const mapSize = lite ? SHADOWS.mapSize / 2 : SHADOWS.mapSize; // smaller shadow map on phones
   const light = LIGHTS[theme].lamp;
   const [x, y, z] = LAMP.position;
   const cordLength = ROOM.height - y - 0.07;
@@ -84,7 +85,7 @@ export function Lamp({ theme, onPull }: { theme: ThemeName; onPull?: () => void 
         decay={1.6}
         distance={7}
         castShadow
-        shadow-mapSize={[SHADOWS.mapSize, SHADOWS.mapSize]}
+        shadow-mapSize={[mapSize, mapSize]}
         shadow-bias={-0.0006}
         shadow-radius={SHADOWS.spread}
         shadow-camera-near={0.3}

@@ -107,7 +107,7 @@ function GamesScreen() {
 function MixedMediaPage() {
   // Spacing on this page: 6rem between blocks, 4rem between a text and the object it describes.
   return (
-    <div className="paper-dark pb-40 pt-16">
+    <div className="paper-dark pb-40 pt-20 md:pt-16">
       {/* Title in red script with a scribbled underline */}
       <div className="mx-auto w-[min(72%,30rem)]">
         <h2>
@@ -119,9 +119,9 @@ function MixedMediaPage() {
         </svg>
       </div>
 
-      <div className="mt-24 flex flex-col gap-24">
+      <div className="mt-14 flex flex-col gap-16 md:mt-24 md:gap-24">
         {/* Pencil: text on the left; the studies sketchbook flush against the right edge (its image is cut there) */}
-        <div className="grid items-center gap-16 pl-[6%] md:grid-cols-[1fr_36%]">
+        <div className="grid items-center gap-10 pl-[6%] md:gap-16 md:grid-cols-[1fr_36%]">
           <p className="paper-text mx-auto max-w-[40rem] pr-[6%] md:pr-0">
             My pencil sketches are where I explore the fundamentals of light, shadow, and anatomy. It&apos;s my space for slow,
             intentional observation mapping out the wireframes of the physical world before they ever transition into a
@@ -138,7 +138,7 @@ function MixedMediaPage() {
         </div>
 
         {/* Oil: the white page sits at the far left of the screen, the ocean painting beside it */}
-        <div className="grid items-center gap-16 pr-[6%] md:grid-cols-[44%_1fr]">
+        <div className="grid items-center gap-10 pr-[6%] md:gap-16 md:grid-cols-[44%_1fr]">
           <div className="paper-note mx-[6%] md:-ml-[5%] md:mr-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/images/texture-tape.webp" alt="" className="tape -right-[10%] -top-[4%] rotate-[14deg]" />
@@ -161,7 +161,7 @@ function MixedMediaPage() {
         </div>
 
         {/* Pen: centered text, then the big notebook */}
-        <div className="flex flex-col items-center gap-16 px-[6%]">
+        <div className="flex flex-col items-center gap-10 px-[6%] md:gap-16">
           <p className="paper-text max-w-[54rem] text-center">
             These are my pen sketches born at random moments, in the margins of notebooks or on the backs of receipts. Using
             pen and ink forces a certain level of confidence there is no undo button. I love the raw, unedited energy of
