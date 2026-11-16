@@ -57,10 +57,13 @@ export const TROPHIES = {
   ],
 };
 
-/** Lamp shadows. Higher `softness` = blurrier edges. */
+/**
+ * Lamp shadows (the original crisp style).
+ * `spread` is how far the edge is sampled, in shadow-map pixels. This three.js version dithers the edge
+ * with per-pixel noise, so a large spread looks grainy / sketchy: keep it near 1 for clean edges.
+ */
 export const SHADOWS = {
-  softness: 7,
-  samples: 18,
+  spread: 1,
   mapSize: 2048,
 };
 

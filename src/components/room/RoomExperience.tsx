@@ -135,7 +135,7 @@ export default function RoomExperience() {
   return (
     <div className="fixed inset-0 overflow-hidden">
       <Canvas
-        shadows="variance"
+        shadows
         dpr={lite ? [1, 1.25] : [1, 1.5]}
         frameloop={paused ? "never" : "always"}
         camera={{ fov: CAMERA.fov, near: 0.1, far: 30, position: CAMERA.overview.position }}

@@ -85,9 +85,8 @@ export function Lamp({ theme, onPull }: { theme: ThemeName; onPull?: () => void 
         distance={7}
         castShadow
         shadow-mapSize={[SHADOWS.mapSize, SHADOWS.mapSize]}
-        shadow-bias={-0.0004}
-        shadow-radius={SHADOWS.softness}
-        shadow-blurSamples={SHADOWS.samples}
+        shadow-bias={-0.0006}
+        shadow-radius={SHADOWS.spread}
         shadow-camera-near={0.3}
         shadow-camera-far={6}
       />

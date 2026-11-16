@@ -7,7 +7,7 @@ Where this file and the original brief disagree, this file wins.
 
 - Screen pop-up delay is 0.5s (`CAMERA.screenDelay`).
 - VR headset screen reads "Currently working on my FYP HEHE".
-- Room shadows are soft variance shadows (`shadows="variance"` on the Canvas; tune with `SHADOWS` in `scene.config.ts`). PCFSoftShadowMap no longer exists in this three.js version.
+- Room shadows: Abdul rejected variance (blurred) shadows. Keep the default PCF shadows with `SHADOWS.spread` near 1. This three.js version dithers PCF edges with per-pixel noise, so a larger radius (it was 5) looks grainy / "sketchy".
 - Mixed Media: first text centered in its column, second sketchbook centered, no shadow on the paper note.
 
 ## Revision 6 (2026-11-16)
